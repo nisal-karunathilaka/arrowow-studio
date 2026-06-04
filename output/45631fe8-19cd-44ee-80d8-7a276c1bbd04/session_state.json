@@ -1,0 +1,157 @@
+{
+  "metadata": {
+    "session_id": "45631fe8-19cd-44ee-80d8-7a276c1bbd04",
+    "mode": "LIVE_MEDIA",
+    "status": "production_complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "en-AU-Neural2-A",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. IMPORTANT FOR VIDEO: Ensure all scenes use her voice as a *voiceover* (B-roll style) while she performs actions in the video, rather than her talking directly to the camera with lip sync. This creates a highly professional, cinematic, and natural UGC feel."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "angle": "High-energy gym motivation combined with a direct squat-proof demonstration, proving the Seamless Sage Green Leggings combine elite comfort with ultimate coverage.",
+      "cta": "Tap to shop our Seamless collection and crush your next workout.",
+      "hook": "Stop scrolling, get up, and hit those squats\u2014no excuses, and zero sheer with these Seamless Sage Green Leggings.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "estimated_duration_seconds": 15,
+      "script_text": "Alright team, ... stop scrolling ... get UP ... and hit those SQUATS! ... NO excuses ... and absolutely ZERO sheer ... with these Seamless Sage Green Leggings. ... Let's get after it today! ... Quick reality check: ... these combine ELITE comfort ... with ULTIMATE coverage ... keeping you completely squat-proof and confident. ... Tap to shop our Seamless collection ... and crush your NEXT workout!",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "brand_safety_score": 1,
+      "feedback": "{\"approved\": true, \"feedback\": \"The script strictly avoids all prohibited phrases and perfectly matches the high-energy, encouraging tone of the Sienna Bondi persona.\", \"brand_safety_score\": 1.0}"
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "A continuous talking-head shot of an energetic fitness coach in a modern home gym wearing the Seamless Sage Green Leggings. She looks directly at the camera with an enthusiastic smile, delivering the lines with engaging hand gestures. As she says 'hit those SQUATS!', she demonstrates a quick, confident squat, verifying that the leggings are completely opaque and squat-proof. She maintains a motivated, friendly expression throughout the entire speech, transitioning to an inviting pointing gesture towards the bottom of the screen during the call-to-action at the end.",
+          "camera": "A static, eye-level, medium-shot framing the presenter from the chest up, keeping her centered and in sharp focus for the entire duration."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Brightly lit modern gym with mirrors and free weights.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "static_frame_prompt": "A static, eye-level, medium-shot of Sienna, an energetic fitness coach, looking directly at the camera with a bright, enthusiastic smile in a brightly lit modern gym with mirrors and free weights in the background. Sienna is centered and in sharp focus, framed from the chest up. She is wearing a modern seamless sage green activewear set, featuring a matching sage green sports bra and high-waisted seamless sage green leggings. Her posture is confident and her expression remains friendly and motivating. The lighting is clean, bright, and flattering, perfect for a high-quality, continuous talking-head shot for lip sync.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "A static, eye-level, medium-shot of Sienna, an energetic fitness coach, looking directly at the camera with a bright, enthusiastic smile in a brightly lit modern gym with mirrors and free weights in the background. Sienna is centered and in sharp focus, framed from the chest up. She is wearing a modern seamless sage green activewear set, featuring a matching sage green sports bra and high-waisted seamless sage green leggings. Her posture is confident and her expression remains friendly and motivating. The lighting is clean, bright, and flattering, perfect for a high-quality, continuous talking-head shot for lip sync.",
+    "provider": "live",
+    "asset_uri": "output/45631fe8-19cd-44ee-80d8-7a276c1bbd04/sienna_frame_9e4c74.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {
+    "model_route": "mock_direct_dialogue",
+    "generated_video_uri": "output/45631fe8-19cd-44ee-80d8-7a276c1bbd04/final_concatenated.mp4",
+    "generated_audio_uri": "",
+    "synced_video_uri": "output/45631fe8-19cd-44ee-80d8-7a276c1bbd04/final_concatenated.mp4",
+    "video_critic_report": {
+      "approved": false,
+      "feedback": "The video suffers from a severe lack of lip synchronization; the subject's mouth movements are completely disconnected from the audio track. Additionally, the facial expressions appear stiff and the head movements are somewhat robotic, resulting in a noticeable uncanny valley effect. This is not suitable for production use.",
+      "production_grade_score": 2
+    }
+  },
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 3,
+    "regenerations": 0,
+    "budget_status": "exceeded",
+    "tts_characters": 0
+  },
+  "errors": []
+}

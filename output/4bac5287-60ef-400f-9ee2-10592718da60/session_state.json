@@ -1,0 +1,253 @@
+{
+  "metadata": {
+    "session_id": "4bac5287-60ef-400f-9ee2-10592718da60",
+    "mode": "LIVE_MEDIA",
+    "status": "complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "en-AU-Neural2-A",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. IMPORTANT FOR VIDEO: Ensure all scenes use her voice as a *voiceover* (B-roll style) while she performs actions in the video, rather than her talking directly to the camera with lip sync. This creates a highly professional, cinematic, and natural UGC feel."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "hook": "Level up your lifts, not your wardrobe worries!",
+      "angle": "Sienna's crushing her workout in our Seamless Sage Green Leggings \u2013 watch as they stay put, squat after squat. Zero see-through, maximum comfort, so you can focus on what truly matters: your gains. Because consistency isn't just about showing up, it's about showing up prepared.",
+      "cta": "Unlock your potential. Explore the Seamless Sage Green Leggings and more from Arrowow Active.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "script_text": "Alright team, level up your lifts, not your wardrobe worries! You know how it is. You're in the middle of a set, pushing for that PR, and suddenly you\u2019re worried about your leggings. Are they staying up? Are they see-through? Sienna's crushing her workout in our Seamless Sage Green Leggings \u2013 watch as they stay put, squat after squat. Zero see-through, maximum comfort, so you can focus on what truly matters: your gains. Because consistency isn't just about showing up, it's about showing up prepared. Ready to conquer every rep, distraction-free. Unlock your potential. Explore the Seamless Sage Green Leggings and more from Arrowow Active.",
+      "estimated_duration_seconds": 30,
+      "scenes": [
+        {
+          "scene_number": 1,
+          "visuals": "Sienna (26, athletic build, messy blonde high ponytail) is in a brightly lit modern gym. She adjusts her ponytail, looking determined. A massive pastel Stanley cup is visible nearby.",
+          "voiceover": {
+            "text": "Alright team, level up your lifts, not your wardrobe worries!",
+            "tone": "High energy, slightly breathless, fast and punchy."
+          }
+        },
+        {
+          "scene_number": 2,
+          "visuals": "Jump cut. Sienna is performing heavy squats in her Seamless Sage Green Leggings. Camera angles alternate: a shot from slightly behind, then a side profile, focusing on the leggings' stability. Close-up shot on her glutes and thighs as she stretches, demonstrating zero see-through. She looks focused and completely unbothered by her activewear. She casually wipes a small amount of sweat from her forehead.",
+          "voiceover": {
+            "text": "You know how it is. You're in the middle of a set, pushing for that PR, and suddenly you\u2019re worried about your leggings. Are they staying up? Are they see-through? Sienna's crushing her workout in our Seamless Sage Green Leggings \u2013 watch as they stay put, squat after squat. Zero see-through, maximum comfort, so you can focus on what truly matters: your gains.",
+            "tone": "High energy, encouraging, fast-paced, emphasizing benefits."
+          }
+        },
+        {
+          "scene_number": 3,
+          "visuals": "Jump cut. Sienna finishes her set, racks the weight, and takes a big, satisfying sip from her Stanley cup, holding the camera selfie-style. She has a confident, empowered smile. Quick pan down to show the Seamless Sage Green Leggings clearly.",
+          "voiceover": {
+            "text": "Because consistency isn't just about showing up, it's about showing up prepared. Ready to conquer every rep, distraction-free. Unlock your potential. Explore the Seamless Sage Green Leggings and more from Arrowow Active.",
+            "tone": "Encouraging, direct, high energy."
+          }
+        }
+      ],
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "feedback": "The script successfully avoids all prohibited phrases. The tone is high energy, encouraging, and authentic, aligning well with the persona's description of a 'hype girl and tough-love fitness bestie'. The pacing appears fast and punchy, suitable for high-retention social media content.",
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "Sienna (26, athletic build, messy blonde high ponytail) is in a brightly lit modern gym.",
+          "camera": "Medium shot establishing Sienna in the gym."
+        },
+        {
+          "scene": 2,
+          "action": "She adjusts her ponytail, looking determined.",
+          "camera": "Close-up on her hands adjusting her ponytail."
+        },
+        {
+          "scene": 3,
+          "action": "A massive pastel Stanley cup is visible nearby.",
+          "camera": "Close-up on her determined face."
+        },
+        {
+          "scene": 4,
+          "action": "Sienna is performing heavy squats in her Seamless Sage Green Leggings.",
+          "camera": "Medium shot including the Stanley cup."
+        },
+        {
+          "scene": 5,
+          "action": "She stretches.",
+          "camera": "Jump cut to Sienna performing squats."
+        },
+        {
+          "scene": 6,
+          "action": "She wipes a small amount of sweat from her forehead.",
+          "camera": "Shot from slightly behind, focusing on leggings' stability."
+        },
+        {
+          "scene": 7,
+          "action": "Sienna looks focused and unbothered by her activewear.",
+          "camera": "Side profile shot, focusing on leggings' stability."
+        },
+        {
+          "scene": 8,
+          "action": "Sienna finishes her set.",
+          "camera": "Close-up on her glutes and thighs demonstrating zero see-through."
+        },
+        {
+          "scene": 9,
+          "action": "She racks the weight.",
+          "camera": "Close-up on her focused face."
+        },
+        {
+          "scene": 10,
+          "action": "She takes a big, satisfying sip from her Stanley cup.",
+          "camera": "Close-up on her wiping sweat."
+        },
+        {
+          "scene": 11,
+          "action": "She holds the camera selfie-style.",
+          "camera": "Jump cut."
+        },
+        {
+          "scene": 12,
+          "action": "She has a confident, empowered smile.",
+          "camera": "Medium shot of Sienna finishing set and racking weight."
+        },
+        {
+          "scene": 13,
+          "action": "",
+          "camera": "Close-up of Sienna sipping from Stanley cup, holding camera selfie-style."
+        },
+        {
+          "scene": 14,
+          "action": "",
+          "camera": "Close-up of her confident, empowered smile."
+        },
+        {
+          "scene": 15,
+          "action": "",
+          "camera": "Quick pan down to clearly show the Seamless Sage Green Leggings."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Brightly lit modern gym with mirrors and free weights.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "prompt": "Sienna, a 26-year-old woman with an athletic build and a messy blonde high ponytail, is in a brightly lit, modern gym with polished floors, mirrors, and free weights, creating a clean and active atmosphere. She is dressed in a matching seamless sage green activewear set, embodying a premium Gymshark/Lululemon aesthetic. A massive pastel Stanley cup rests nearby.\n\nThe scene opens with a medium shot establishing Sienna in the gym. She then adjusts her ponytail with a determined expression, captured in a close-up on her hands, followed by a close-up on her determined face, with the massive pastel Stanley cup subtly visible in the background or foreground.\n\nTransition to a medium shot where Sienna performs heavy squats, her seamless sage green leggings prominent, with the pastel Stanley cup still in view. A dynamic jump cut shows her mid-squat, emphasizing her athletic form. This is followed by a shot from slightly behind and then a side profile shot, both focusing on the stability and non-sheerness of her seamless sage green leggings during the squat, as she wipes a small amount of sweat from her forehead, maintaining a focused and unbothered demeanor. A close-up focuses intently on her glutes and thighs, demonstrating the zero see-through quality and flattering fit of the leggings.\n\nSienna finishes her challenging set, racks the heavy weights, and takes a big, satisfying sip from her massive pastel Stanley cup. She then shifts, holding the camera selfie-style, displaying a confident, empowered smile. The final sequence is a close-up selfie shot, first focusing on her sipping from the Stanley cup with her confident, empowered smile, then a quick pan down to clearly showcase her seamless sage green leggings, highlighting their design and fit.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "Sienna, a 26-year-old woman with an athletic build and a messy blonde high ponytail, is in a brightly lit, modern gym with polished floors, mirrors, and free weights, creating a clean and active atmosphere. She is dressed in a matching seamless sage green activewear set, embodying a premium Gymshark/Lululemon aesthetic. A massive pastel Stanley cup rests nearby.\n\nThe scene opens with a medium shot establishing Sienna in the gym. She then adjusts her ponytail with a determined expression, captured in a close-up on her hands, followed by a close-up on her determined face, with the massive pastel Stanley cup subtly visible in the background or foreground.\n\nTransition to a medium shot where Sienna performs heavy squats, her seamless sage green leggings prominent, with the pastel Stanley cup still in view. A dynamic jump cut shows her mid-squat, emphasizing her athletic form. This is followed by a shot from slightly behind and then a side profile shot, both focusing on the stability and non-sheerness of her seamless sage green leggings during the squat, as she wipes a small amount of sweat from her forehead, maintaining a focused and unbothered demeanor. A close-up focuses intently on her glutes and thighs, demonstrating the zero see-through quality and flattering fit of the leggings.\n\nSienna finishes her challenging set, racks the heavy weights, and takes a big, satisfying sip from her massive pastel Stanley cup. She then shifts, holding the camera selfie-style, displaying a confident, empowered smile. The final sequence is a close-up selfie shot, first focusing on her sipping from the Stanley cup with her confident, empowered smile, then a quick pan down to clearly showcase her seamless sage green leggings, highlighting their design and fit.",
+    "provider": "live",
+    "asset_uri": "output/4bac5287-60ef-400f-9ee2-10592718da60/sienna_frame_349dcb.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {
+    "model_route": "mock_direct_dialogue",
+    "generated_video_uri": "output/4bac5287-60ef-400f-9ee2-10592718da60/veo_final_102107.mp4",
+    "generated_audio_uri": "output/4bac5287-60ef-400f-9ee2-10592718da60/voiceover_014f7c.mp3",
+    "synced_video_uri": "output/4bac5287-60ef-400f-9ee2-10592718da60/veo_final_synced.mp4",
+    "video_critic_report": {
+      "approved": true,
+      "feedback": "Motion is smooth, lip sync is accurate.",
+      "artifact_risk": "low"
+    }
+  },
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 1,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 644
+  },
+  "errors": []
+}

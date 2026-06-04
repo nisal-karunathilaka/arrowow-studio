@@ -1,0 +1,246 @@
+{
+  "metadata": {
+    "session_id": "8163dcf1-982b-44a1-82fb-9f3d4b9ab702",
+    "mode": "LIVE_MEDIA",
+    "status": "complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "en-AU-Neural2-A",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. IMPORTANT FOR VIDEO: Ensure all scenes use her voice as a *voiceover* (B-roll style) while she performs actions in the video, rather than her talking directly to the camera with lip sync. This creates a highly professional, cinematic, and natural UGC feel."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "hook": "Stop scrolling, start crushing. You're stronger than your excuses. (Sienna in Arrowow Active Seamless Sage Green Leggings hits a perfect, deep squat, showing zero sheerness. She smiles confidently.)",
+      "angle": "Elevate every rep with the ultimate blend of style and undeniable performance. Our Seamless Sage Green Leggings offer a second-skin feel and unwavering confidence, whether you're lifting heavy or flowing through yoga. Experience true squat-proof power, engineered so you can push your limits without a second thought.",
+      "cta": "Ready to feel the difference? Discover your new go-to. Find your perfect fit.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "script": [
+        {
+          "scene_number": 1,
+          "visuals_actions": "Sienna, in Arrowow Active Seamless Sage Green Leggings and matching top, adjusts her high ponytail, then hits a perfect, deep squat, holding the pose. She smiles confidently, making eye contact with the camera (selfie-style, slightly above eye level, slight handheld shake). The camera quickly cuts to another angle of her finishing the squat, showcasing zero sheerness.",
+          "voiceover_script": "Stop scrolling, start crushing. You\u2019re stronger than your excuses.",
+          "on_screen_text": ""
+        },
+        {
+          "scene_number": 2,
+          "visuals_actions": "Quick cut to Sienna performing a weighted lunge, maintaining perfect form. She takes a quick sip from her pastel Stanley cup between reps. Dynamic pacing with jump cuts between exercises (e.g., deadlifts, yoga flow) showcasing range of motion.",
+          "voiceover_script": "Alright team, Elevate every rep with the ultimate blend of style and undeniable performance.",
+          "on_screen_text": ""
+        },
+        {
+          "scene_number": 3,
+          "visuals_actions": "Close-up shots of the Seamless Sage Green Leggings during movement \u2013 fabric stretch, compression, and the seamless design. Sienna moves through various exercises (dynamic yoga stretch, heavy lift), emphasizing the 'second-skin' feel and squat-proof quality. She wipes a small amount of sweat from her forehead casually.",
+          "voiceover_script": "Our Seamless Sage Green Leggings offer a second-skin feel and unwavering confidence, whether you're lifting heavy or flowing through yoga. Experience true squat-proof power, engineered so you can push your limits without a second thought. (Voice slightly breathless, authentic)",
+          "on_screen_text": "ARROWOW ACTIVE\nSeamless Sage Green Leggings\nSquat-Proof Power"
+        },
+        {
+          "scene_number": 4,
+          "visuals_actions": "Sienna is holding the camera selfie-style, walking away from the gym (or a sunny outdoor setting). She turns to the camera, gives a genuine, encouraging smile, and maybe a thumbs up.",
+          "voiceover_script": "Ready to feel the difference? Discover your new go-to. Find your perfect fit. (High energy, encouraging)",
+          "on_screen_text": "Ready to feel the difference?\nFind your perfect fit."
+        }
+      ],
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "feedback": "The script strictly adheres to the persona's prohibited phrases list. The tone throughout the voiceover scripts is high energy, encouraging, and authentic, consistently aligning with Sienna Bondi's persona as a hype girl and tough-love fitness bestie. The mention of a 'slightly breathless, authentic' voice in scene 3 directly matches the persona's voice identity.",
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "Sienna adjusts her high ponytail.",
+          "camera": "Medium close-up, selfie-style, slightly above eye level, slight handheld shake."
+        },
+        {
+          "scene": 2,
+          "action": "Sienna hits a perfect, deep squat, holding the pose.",
+          "camera": "Medium close-up, selfie-style, slightly above eye level, slight handheld shake."
+        },
+        {
+          "scene": 3,
+          "action": "Sienna smiles confidently, making eye contact with the camera.",
+          "camera": "Medium close-up, selfie-style, slightly above eye level, slight handheld shake."
+        },
+        {
+          "scene": 4,
+          "action": "Sienna finishes the squat, showcasing zero sheerness.",
+          "camera": "Cut to a different angle (full body or medium), focused on lower body, for squat finish."
+        },
+        {
+          "scene": 5,
+          "action": "Quick cut to Sienna performing a weighted lunge, maintaining perfect form.",
+          "camera": "Medium shot or full body shot, dynamic angle, for weighted lunge."
+        },
+        {
+          "scene": 6,
+          "action": "Sienna takes a quick sip from her pastel Stanley cup between reps.",
+          "camera": "Close-up on Stanley cup and Sienna's face."
+        },
+        {
+          "scene": 7,
+          "action": "Dynamic pacing with jump cuts between exercises (e.g., deadlifts, yoga flow) showcasing range of motion.",
+          "camera": "Jump cuts between various exercises (e.g., deadlifts, yoga flow) using dynamic angles."
+        },
+        {
+          "scene": 8,
+          "action": "Close-up shots of the Seamless Sage Green Leggings during movement \u2013 fabric stretch, compression, and the seamless design.",
+          "camera": "Extreme close-ups on the leggings (fabric stretch, compression, seamless design) during movement."
+        },
+        {
+          "scene": 9,
+          "action": "Sienna moves through a dynamic yoga stretch, emphasizing the 'second-skin' feel.",
+          "camera": "Medium to full shot for dynamic yoga stretch, focusing on flexibility and garment movement."
+        },
+        {
+          "scene": 10,
+          "action": "Sienna performs a heavy lift, emphasizing squat-proof quality.",
+          "camera": "Low angle or eye-level shot for heavy lift to emphasize strength and squat-proof aspect."
+        },
+        {
+          "scene": 11,
+          "action": "Sienna casually wipes a small amount of sweat from her forehead.",
+          "camera": "Close-up on Sienna's face/forehead for wiping sweat."
+        },
+        {
+          "scene": 12,
+          "action": "Sienna is holding the camera selfie-style, walking away from the gym (or a sunny outdoor setting).",
+          "camera": "POV shot, handheld selfie-style, tracking Sienna as she walks."
+        },
+        {
+          "scene": 13,
+          "action": "Sienna turns to the camera.",
+          "camera": "POV shot, handheld selfie-style."
+        },
+        {
+          "scene": 14,
+          "action": "Sienna gives a genuine, encouraging smile and a thumbs up.",
+          "camera": "Close-up, selfie-style, for smile and thumbs up."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Brightly lit modern gym with mirrors and free weights.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "Prompt": "Sienna, embodying fitness and confidence, is in a brightly lit modern gym with mirrors and free weights, wearing a matching seamless activewear set in a sage green color (similar to Gymshark/Lululemon aesthetic). The sequence begins with a medium close-up, selfie-style shot, slightly above eye level, with a slight handheld shake, as Sienna adjusts her high ponytail. She then smoothly transitions into a perfect, deep squat, holding the powerful pose, while maintaining the same selfie-style camera perspective. A confident smile graces her face as she makes direct eye contact with the camera in a continued medium close-up. The camera then cuts to a different angle, a full body or medium shot focused on her lower body, showcasing the zero sheerness of her leggings as she finishes the squat. A quick, dynamic cut follows, showing Sienna performing a weighted lunge with impeccable form, captured from a dynamic medium or full body shot. Between repetitions, a close-up focuses on her pastel Stanley cup as she takes a quick, refreshing sip, her face visible. The scene then shifts to highlight her versatility with dynamic jump cuts between various exercises such as deadlifts and a flowing yoga sequence, all captured from engaging and dynamic angles to showcase her full range of motion. Extreme close-ups specifically highlight the Seamless Sage Green Leggings during movement, emphasizing their fabric stretch, compression, and intricate seamless design. In a medium to full shot, Sienna gracefully moves through a dynamic yoga stretch, visually emphasizing the 'second-skin' feel and how the garment moves with her flexibility. She then performs a heavy lift, captured from a low or eye-level angle, to emphasize both her strength and the crucial squat-proof quality of the activewear. A close-up on Sienna's face shows her casually wiping a small amount of sweat from her forehead, adding a touch of authenticity. The narrative concludes with a POV shot from a handheld selfie-style camera, tracking Sienna as she walks away from the gym (or a sunny outdoor setting). She then turns to face the camera, maintaining the POV selfie-style view, and finishes with a genuine, encouraging smile and a confident thumbs up in a close-up, selfie-style shot.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "",
+    "provider": "live",
+    "asset_uri": "error.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {
+    "model_route": "mock_direct_dialogue",
+    "generated_video_uri": "output/8163dcf1-982b-44a1-82fb-9f3d4b9ab702/veo_final_e8c132.mp4",
+    "generated_audio_uri": "",
+    "synced_video_uri": "output/8163dcf1-982b-44a1-82fb-9f3d4b9ab702/veo_final_e8c132.mp4",
+    "video_critic_report": {
+      "approved": true,
+      "feedback": "The video demonstrates excellent production quality. The human face displays genuine excitement, and the movements are fluid and natural, particularly the jump and the dynamic water splash. There are no uncanny valley effects present; the person and their interaction with the environment appear entirely realistic and highly engaging. The synchronization between the audio (excited exclamation and distinct water splash sound effects) and the visual action is perfect. This is not a lip-sync scenario, but rather an effective integration of natural sound effects and vocalizations that perfectly align with the slow-motion visual action, creating a compelling and immersive experience.",
+      "production_grade_score": 10
+    }
+  },
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 1,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 0
+  },
+  "errors": []
+}

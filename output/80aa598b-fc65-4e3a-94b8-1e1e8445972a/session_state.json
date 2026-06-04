@@ -1,0 +1,177 @@
+{
+  "metadata": {
+    "session_id": "80aa598b-fc65-4e3a-94b8-1e1e8445972a",
+    "mode": "LIVE_MEDIA",
+    "status": "production_complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "en-AU-Neural2-A",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. IMPORTANT FOR VIDEO: Ensure all scenes use her voice as a *voiceover* (B-roll style) while she performs actions in the video, rather than her talking directly to the camera with lip sync. This creates a highly professional, cinematic, and natural UGC feel."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "angle": "Tough-love gym motivation paired with a real-time, high-energy durability test. Showing Sienna executing a flawless, deep squat showcases both the extreme comfort and the completely squat-proof, non-sheer quality of the Seamless Sage Green Leggings under real workout stress.",
+      "cta": "Head over to Arrowow Active and upgrade your activewear with the Seamless Sage Green Leggings now to crush your next leg day without any distractions!",
+      "hook": "[Sienna drops into a deep, intense barbell squat, then springs back up with high energy] \"Your excuses won't build legs like these, and neither will thin leggings. These Seamless Sage Green Leggings from Arrowow Active are 100% squat-proof\u2014now stop scrolling and let's get to work!\"",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "script_text": "[VIDEO: Quick cut to a modern gym. Selfie-style shot held above eye level. Sienna drops into a deep, intense barbell squat, showing the completely squat-proof, non-sheer quality of the Seamless Sage Green Leggings under stress, then springs back up with high energy with a slight, realistic camera shake.]\n[VO (Sienna - High energy, australian accent, slightly breathless): \"Your excuses won't build legs like these, and neither will thin leggings. These Seamless Sage Green Leggings from Arrowow Active are 100% squat-proof\u2014now stop scrolling and let's get to work!\"]\n\n[VIDEO: Jump cut to Sienna in front of the mirror adjusting her high ponytail casually before walking selfie-style through the brightly lit gym.]\n[VO (Sienna): \"Alright team, quick reality check: you can't crush a leg day if you're constantly worried about your leggings being sheer. Let's get after it today with zero distractions.\"]\n\n[VIDEO: Close-up of the premium sage green fabric stretching under stress as she does deep lunges. Then, Sienna wipes a small amount of sweat from her forehead casually and takes a quick sip from her massive pastel Stanley cup.]\n[VO (Sienna): \"These are ultra-supportive and completely squat-proof. Head over to Arrowow Active and upgrade your activewear with the Seamless Sage Green Leggings now to crush your next leg day without any distractions!\"]",
+      "estimated_duration_seconds": 20,
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "brand_safety_score": 1,
+      "feedback": "The script strictly avoids all prohibited phrases, perfectly incorporates the character's signature catchphrases ('Alright team,', 'quick reality check:', 'Let's get after it today,'), utilizes voiceovers (B-roll style) as required by the vibe guidelines, and maintains the authentic, energetic Aussie tough-love fitness bestie tone with zero prohibited language."
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "Sienna drops into a deep, intense barbell squat in a modern gym, showing off the Seamless Sage Green Leggings under stress, and then springs back up with high energy.",
+          "camera": "Selfie-style shot held above eye level with a slight, realistic camera shake."
+        },
+        {
+          "scene": 2,
+          "action": "Sienna stands in front of a mirror and casually adjusts her high ponytail.",
+          "camera": "Medium mirror reflection shot focusing on Sienna."
+        },
+        {
+          "scene": 3,
+          "action": "Sienna walks through the brightly lit gym of the fitness center.",
+          "camera": "Selfie-style camera angle tracking Sienna as she walks."
+        },
+        {
+          "scene": 4,
+          "action": "Sienna performs deep lunges, stretching the premium sage green fabric.",
+          "camera": "Extreme close-up shot of the premium sage green fabric stretching."
+        },
+        {
+          "scene": 5,
+          "action": "Sienna casually wipes a bit of sweat from her forehead and takes a quick sip from her massive pastel Stanley cup.",
+          "camera": "Medium hand-held camera angle, keeping the frame casual and personal."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Brightly lit modern gym with mirrors and free weights.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "static_frame_prompt": "A highly detailed, cinematic sequence of five sequential scenes featuring Sienna, an athletic young fitness influencer in her mid-20s, in a brightly lit modern gym with polished mirrors and free weights. Sienna is wearing a matching seamless premium activewear set in a pastel sage green color, invoking a modern Gymshark and Lululemon aesthetic.\n\nScene 1: Selfie-style video shot, held above eye level with a realistic slight camera shake. Sienna drops into a deep, intense barbell squat. The camera showcases the Seamless Sage Green Leggings under physical stress as she powers down, and then she springs back up with high energy.\n\nScene 2: Medium mirror reflection shot focusing on Sienna as she stands in front of a mirror, casually adjusting her high ponytail before her next exercise, showcasing her lean, athletic build.\n\nScene 3: Selfie-style video tracking shot, following Sienna as she walks through the brightly lit fitness center, showing off the vibrant and energetic gym environment with equipment in the background.\n\nScene 4: Extreme close-up shot of the premium sage green fabric stretching to its limit as Sienna performs deep lunges. The texture and high-quality seamless weave of the fabric are in sharp focus, showing that it is robust and completely opaque.\n\nScene 5: Medium hand-held camera angle keeping the frame casual and personal. Sienna casually wipes a bit of sweat from her forehead after her intense workout, and then takes a quick sip from her massive, trendy pastel Stanley cup.\n\nThe overall style should be in the style of high-quality UGC (User Generated Content) video with natural lighting, sharp focus, and polished aesthetics.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "A highly detailed, cinematic sequence of five sequential scenes featuring Sienna, an athletic young fitness influencer in her mid-20s, in a brightly lit modern gym with polished mirrors and free weights. Sienna is wearing a matching seamless premium activewear set in a pastel sage green color, invoking a modern Gymshark and Lululemon aesthetic.\n\nScene 1: Selfie-style video shot, held above eye level with a realistic slight camera shake. Sienna drops into a deep, intense barbell squat. The camera showcases the Seamless Sage Green Leggings under physical stress as she powers down, and then she springs back up with high energy.\n\nScene 2: Medium mirror reflection shot focusing on Sienna as she stands in front of a mirror, casually adjusting her high ponytail before her next exercise, showcasing her lean, athletic build.\n\nScene 3: Selfie-style video tracking shot, following Sienna as she walks through the brightly lit fitness center, showing off the vibrant and energetic gym environment with equipment in the background.\n\nScene 4: Extreme close-up shot of the premium sage green fabric stretching to its limit as Sienna performs deep lunges. The texture and high-quality seamless weave of the fabric are in sharp focus, showing that it is robust and completely opaque.\n\nScene 5: Medium hand-held camera angle keeping the frame casual and personal. Sienna casually wipes a bit of sweat from her forehead after her intense workout, and then takes a quick sip from her massive, trendy pastel Stanley cup.\n\nThe overall style should be in the style of high-quality UGC (User Generated Content) video with natural lighting, sharp focus, and polished aesthetics.",
+    "provider": "live",
+    "asset_uri": "output/80aa598b-fc65-4e3a-94b8-1e1e8445972a/sienna_frame_24847b.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {
+    "model_route": "mock_direct_dialogue",
+    "generated_video_uri": "output/80aa598b-fc65-4e3a-94b8-1e1e8445972a/veo_final_638559.mp4",
+    "generated_audio_uri": "",
+    "synced_video_uri": "output/80aa598b-fc65-4e3a-94b8-1e1e8445972a/veo_final_638559.mp4",
+    "video_critic_report": {
+      "approved": false,
+      "feedback": "The video fails to meet production standards due to significant AI artifacts and technical flaws. The lip sync is entirely completely incorrect; the subject's mouth movements are completely disconnected from the spoken audio. Additionally, there are severe continuity errors, notably the barbell instantly disappearing from the subject's shoulders after the initial squat. The human face appears unnatural and stiff, falling heavily into the uncanny valley, particularly when she turns to face the camera. The movements are robotic, and the camera she holds is visibly distorted.",
+      "production_grade_score": 2
+    }
+  },
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 1,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 0
+  },
+  "errors": []
+}

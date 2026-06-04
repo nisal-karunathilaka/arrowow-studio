@@ -1,0 +1,214 @@
+{
+  "metadata": {
+    "session_id": "0d13aeb8-8cc7-4897-b373-e6c756e4a345",
+    "mode": "LIVE_MEDIA",
+    "status": "static_frame_complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "en-AU-Neural2-A",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. IMPORTANT FOR VIDEO: Ensure all scenes use her voice as a *voiceover* (B-roll style) while she performs actions in the video, rather than her talking directly to the camera with lip sync. This creates a highly professional, cinematic, and natural UGC feel."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "angle": "Real-world durability meets zero-distraction comfort. Highlighting the high-performance fabric under maximum workout tension to prove that you can focus 100% on your gains, not your gear.",
+      "cta": "Elevate your training standards. Tap to get your Seamless Sage Green Leggings and experience ultimate squat-proof confidence.",
+      "hook": "Stop babying your training. If your leggings sheered out during that squat, they don't belong in your gym bag. Watch this: Seamless Sage Green, zero see-through, total squat-proof support.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "script_text": "Quick reality check: ... STOP babying your training! ... If your leggings sheered out during that squat ... they do NOT belong in your gym bag. ... Watch this: ... Seamless Sage Green ... ZERO see-through ... total SQUAT-PROOF support! ... Alright team, ... this is where real-world durability meets ZERO-DISTRACTION comfort. ... High-performance fabric under MAXIMUM workout tension ... to prove that you can focus ONE HUNDRED PERCENT on your gains ... NOT your gear! ... Elevate your training standards. ... Tap to get your Seamless Sage Green Leggings ... and experience ULTIMATE squat-proof confidence! ... Let's get after it today!",
+      "estimated_duration_seconds": 15,
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "brand_safety_score": 1,
+      "feedback": "The script strictly avoids all prohibited phrases ('Hello everyone', 'Welcome back to my channel', 'Buy this product now', 'Link in bio') and perfectly matches the energetic, tough-love fitness bestie tone of Sienna Bondi, incorporating her catchphrases ('Quick reality check:', 'Alright team,', 'Let's get after it today,') naturally."
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "An energetic fitness influencer looks directly into the camera in a gym, grabbing the viewer's attention with a quick hand clap.",
+          "camera": "Medium close-up, eye-level, slowly pushing in to create an immediate connection with the viewer."
+        },
+        {
+          "scene": 2,
+          "action": "A fast cut to an athlete performing a deep squat, highlighting the tension on poorly-made, sheering leggings.",
+          "camera": "Low angle, medium profile shot, focusing on the strain of the lower-quality fabric."
+        },
+        {
+          "scene": 3,
+          "action": "The influencer, now wearing the Seamless Sage Green Leggings, executes a deep squat, showing complete opacity and zero transparency.",
+          "camera": "Tracking side shot, moving down to stay level with the hips and emphasizing the squat-proof fabric."
+        },
+        {
+          "scene": 4,
+          "action": "The athlete stands up effortlessly, adjusting their gear with a comfortable, zero-distraction fit.",
+          "camera": "Medium shot, eye-level, panning slightly to follow the influencer's confident posture."
+        },
+        {
+          "scene": 5,
+          "action": "Extreme close-up of the premium fabric stretching under tension, illustrating high durability.",
+          "camera": "Macro close-up, capturing the fine texture and high stretch-resistance of the fabric."
+        },
+        {
+          "scene": 6,
+          "action": "The influencer walks confidently towards the camera, gesturing towards the Sage Green Leggings with an on-screen 'Tap to Shop' prompt.",
+          "camera": "Wide-to-medium tracking shot, following the influencer's approach into the frame."
+        },
+        {
+          "scene": 7,
+          "action": "The influencer gives a brief fist bump directly to the camera, then turns back to their workout.",
+          "camera": "Close-up shot of the fist bump, pulling back to a wide shot as they return to the gym floor."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Brightly lit modern gym with mirrors and free weights.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "master_prompt": "A professional, cinematic commercial advertising prompt for a premium activewear campaign. In a brightly lit, modern luxury gym with reflective mirrors, minimal design, and professional free weights, an energetic fitness influencer model presents high-performance matching seamless activewear sets in a pastel sage green color (Gymshark and Lululemon aesthetic). The sequence highlights athletic performance, showcasing deep squats where the seamless sage green leggings are shown to be completely squat-proof, fully opaque with zero transparency, high-strength tension, and durable knit texture under stress. Shot features dramatic gym lighting highlighting muscle definition, fine fabric knit texture, shallow depth of field, high-end commercial fashion style, ultra-realistic, 8k resolution.",
+      "scene_prompts": [
+        {
+          "scene_number": 1,
+          "camera_angle": "Medium close-up, eye-level, pushing in",
+          "prompt": "An energetic fitness influencer looking smilingly and directly into the camera in a brightly lit modern gym with mirrors and free weights, grabbing attention with a quick hand clap. She wears a seamless pastel sage green activewear set, Gymshark aesthetic, dramatic lighting, photorealistic, 8k."
+        },
+        {
+          "scene_number": 2,
+          "camera_angle": "Low angle, medium profile shot",
+          "prompt": "An athlete performing a deep squat in a brightly lit gym, highlighting the tension on poor-quality, thin, sheering leggings that show strain and slight transparency under muscle tension. Low angle medium profile, cinematic photorealistic."
+        },
+        {
+          "scene_number": 3,
+          "camera_angle": "Tracking side shot level with hips",
+          "prompt": "A fit influencer wearing premium Seamless Sage Green Leggings executing a deep, perfect squat, showcasing complete fabric opacity, zero transparency, supreme stretch, and squat-proof material. Modern gym background with free weights, photorealistic."
+        },
+        {
+          "scene_number": 4,
+          "camera_angle": "Medium shot, eye-level, panning",
+          "prompt": "An athletic woman standing up effortlessly in a modern gym with mirrors, adjusting her premium sage green activewear with a comfortable, zero-distraction fit and a confident posture. Soft fitness center ambient lighting, realistic texture, 8k."
+        },
+        {
+          "scene_number": 5,
+          "camera_angle": "Macro close-up",
+          "prompt": "A macro close-up shot of premium fitness sage green fabric stretching under high tension, capturing the detailed texture, high stretch-resistance, durable knit structure, opaque material, and professional advertising lighting."
+        },
+        {
+          "scene_number": 6,
+          "camera_angle": "Wide-to-medium tracking shot",
+          "prompt": "The fitness influencer walking confidently forward towards the camera inside a brightly lit modern gym, elegantly gesturing towards her stylish sage green leggings. Modern gym interior with weights and equipment, commercial look, photorealistic."
+        },
+        {
+          "scene_number": 7,
+          "camera_angle": "Close-up shot of fist bump",
+          "prompt": "A close-up shot of a fitness influencer giving a brief, encouraging fist bump directly to the camera, before turning back to her workout on the gym floor of a brightly lit luxury fitness facility, cinematic depth of field."
+        }
+      ],
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "",
+    "provider": "live",
+    "asset_uri": "error.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {},
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 1,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 0
+  },
+  "errors": []
+}

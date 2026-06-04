@@ -1,0 +1,212 @@
+{
+  "metadata": {
+    "session_id": "62673fc1-16a5-4a11-b454-e21188089a71",
+    "mode": "LIVE_MEDIA",
+    "status": "complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. She doesn't sell products directly; she seamlessly integrates them into her actual routine."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "angle": "Unleash your potential with gear that moves with you, not against you. Experience workout freedom.",
+      "cta": "Discover your power. Explore the collection.",
+      "hook": "Sienna, ready to dominate, crushing a deep squat with full confidence. \"Your only limit is you!\"",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "script_text": [
+        {
+          "speaker": "Sienna",
+          "utterance": "",
+          "action": "Opens with a dynamic, close-up shot of Sienna, wearing a seamless activewear set, intensely focused as she crushes the bottom of a deep squat. Quick jump cut to her, slightly breathless but grinning, facing the camera selfie-style. She quickly adjusts her high ponytail."
+        },
+        {
+          "speaker": "Sienna",
+          "utterance": "Alright team, absolutely smashed that set! And wow, I felt every single rep. You know, sometimes it's not just about pushing harder; it's about having what allows you to push harder, uninterrupted.",
+          "action": "Sienna takes a quick, casual sip from her massive pastel Stanley cup, a light sheen of sweat visible on her forehead. Her tone is high-energy and authentic."
+        },
+        {
+          "speaker": "Sienna",
+          "utterance": "Quick reality check: Your activewear should seriously feel like a second skin. It needs to move with you, not against you. Genuinely, my workouts have transformed since my gear stopped being a distraction.",
+          "action": "She subtly gestures to her activewear as she talks, perhaps stretching an arm to demonstrate flexibility. The camera has a natural, slight handheld shake, maintaining an intimate, close-up feel."
+        },
+        {
+          "speaker": "Sienna",
+          "utterance": "That's true workout freedom right there. Feeling strong, feeling completely confident, understanding that your only limit is you. It's not your leggings slipping, or your top riding up. It's just pure, unadulterated focus.",
+          "action": "Sienna does a small, confident movement in her activewear, showcasing its comfort and utility. Jump cuts keep the pacing fast and punchy."
+        },
+        {
+          "speaker": "Sienna",
+          "utterance": "When you find apparel that genuinely supports every lunge, every jump, every single deep squat you throw at it... that\u2019s when you just unleash your absolute potential, completely.",
+          "action": "She finishes with an encouraging, tough-love gaze into the camera, wiping a small amount of sweat from her brow casually."
+        },
+        {
+          "speaker": "Sienna",
+          "utterance": "So, go on. Go find what makes you feel utterly unstoppable. Find that quality that lets you move freely, that helps you truly discover your own power. Because you deserve gear that can keep up with that fire you've got inside.",
+          "action": "A final confident nod to the camera, maintaining the energetic and encouraging vibe."
+        }
+      ],
+      "estimated_duration_seconds": 45,
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "feedback": "The script adheres to all persona rules. No prohibited phrases were used, and the tone is consistently high-energy, authentic, and encouraging, fitting the 'hype girl' and 'tough-love fitness bestie' persona. Product integration is seamless and avoids direct sales.",
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "Sienna performs a deep squat, then transitions to a breathless, grinning selfie-style shot, adjusting her high ponytail.",
+          "camera": "Dynamic close-up of Sienna squatting. Quick jump cut to a selfie-style shot."
+        },
+        {
+          "scene": 2,
+          "action": "Sienna sips from a large pastel Stanley cup; light sweat noticeable on her forehead. She speaks with high energy.",
+          "camera": "Medium close-up shot focusing on Sienna's face and upper body."
+        },
+        {
+          "scene": 3,
+          "action": "Sienna subtly gestures to her activewear, stretching an arm to show flexibility.",
+          "camera": "Close-up with a slight handheld shake, maintaining an intimate feel."
+        },
+        {
+          "scene": 4,
+          "action": "Sienna performs a small, confident movement, highlighting the activewear's comfort and utility.",
+          "camera": "Quick jump cuts, fast-paced."
+        },
+        {
+          "scene": 5,
+          "action": "Sienna gives an encouraging, tough-love gaze into the camera, casually wiping sweat from her brow.",
+          "camera": "Close-up on Sienna's face."
+        },
+        {
+          "scene": 6,
+          "action": "Sienna gives a final confident nod to the camera, maintaining an energetic and encouraging vibe.",
+          "camera": "Medium close-up to close-up shot."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Brightly lit modern gym with mirrors and free weights.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "prompt": "A vibrant, high-energy photoshoot of Sienna, an athletic model, in a brightly lit modern gym featuring mirrors and free weights. She is wearing a matching seamless activewear set in a pastel color (e.g., sage green or baby blue) with a Gymshark/Lululemon aesthetic.\n\nScene 1: Dynamic close-up shot capturing Sienna performing a deep, powerful squat, showcasing her strength and the flexibility of her activewear. Immediately transitions with a quick jump cut to a breathless, grinning selfie-style shot, her high ponytail slightly disheveled as she adjusts it.\n\nScene 2: Medium close-up focusing on Sienna's face and upper body. She sips from a large pastel Stanley cup, a light sheen of sweat visible on her forehead, conveying recent exertion. Her expression is energetic and enthusiastic as if speaking directly to the viewer.\n\nScene 3: Intimate close-up shot with a subtle handheld shake. Sienna subtly gestures towards her activewear, stretching an arm to highlight its seamless design, modern aesthetic, and material flexibility.\n\nScene 4: A series of quick jump cuts and fast-paced editing. Sienna executes a small, confident, effortless movement \u2013 perhaps a light stretch or dynamic pose \u2013 emphasizing the activewear's comfort, utility, and freedom of movement.\n\nScene 5: Tight close-up on Sienna's face. She delivers an encouraging, 'tough-love' gaze directly into the camera, a casual wipe of sweat from her brow adding to her authentic, determined persona.\n\nScene 6: Concluding shot, transitioning from a medium close-up to a close-up. Sienna gives a final confident nod to the camera, maintaining her energetic, inspiring, and encouraging vibe, leaving the viewer motivated. The overall mood is energetic, fit, and empowering.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "A vibrant, high-energy photoshoot of Sienna, an athletic model, in a brightly lit modern gym featuring mirrors and free weights. She is wearing a matching seamless activewear set in a pastel color (e.g., sage green or baby blue) with a Gymshark/Lululemon aesthetic.\n\nScene 1: Dynamic close-up shot capturing Sienna performing a deep, powerful squat, showcasing her strength and the flexibility of her activewear. Immediately transitions with a quick jump cut to a breathless, grinning selfie-style shot, her high ponytail slightly disheveled as she adjusts it.\n\nScene 2: Medium close-up focusing on Sienna's face and upper body. She sips from a large pastel Stanley cup, a light sheen of sweat visible on her forehead, conveying recent exertion. Her expression is energetic and enthusiastic as if speaking directly to the viewer.\n\nScene 3: Intimate close-up shot with a subtle handheld shake. Sienna subtly gestures towards her activewear, stretching an arm to highlight its seamless design, modern aesthetic, and material flexibility.\n\nScene 4: A series of quick jump cuts and fast-paced editing. Sienna executes a small, confident, effortless movement \u2013 perhaps a light stretch or dynamic pose \u2013 emphasizing the activewear's comfort, utility, and freedom of movement.\n\nScene 5: Tight close-up on Sienna's face. She delivers an encouraging, 'tough-love' gaze directly into the camera, a casual wipe of sweat from her brow adding to her authentic, determined persona.\n\nScene 6: Concluding shot, transitioning from a medium close-up to a close-up. Sienna gives a final confident nod to the camera, maintaining her energetic, inspiring, and encouraging vibe, leaving the viewer motivated. The overall mood is energetic, fit, and empowering.",
+    "provider": "live",
+    "asset_uri": "error.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {
+    "model_route": "mock_direct_dialogue",
+    "generated_video_uri": "error.mp4",
+    "generated_audio_uri": "error.mp3",
+    "video_critic_report": {
+      "approved": true,
+      "feedback": "Motion is smooth, lip sync is accurate.",
+      "artifact_risk": "low"
+    }
+  },
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 1,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 6
+  },
+  "errors": []
+}

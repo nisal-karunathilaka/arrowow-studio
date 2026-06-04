@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "session_id": {"type": "string"},
+        "mode": {"type": "string", "enum": ["DRY_RUN", "LLM_ONLY", "LIVE_MEDIA"]},
+        "status": {"type": "string"},
+        "current_stage": {"type": "string"}
+      },
+      "required": ["session_id", "mode", "status"]
+    },
+    "brief": {"type": "object"},
+    "character": {"type": "object"},
+    "pre_production": {"type": "object"},
+    "visual_plan": {"type": "object"},
+    "static_frame": {"type": "object"},
+    "production": {"type": "object"},
+    "post_production": {"type": "object"},
+    "cost_ledger": {
+      "type": "object",
+      "properties": {
+        "estimated_input_tokens": {"type": "integer"},
+        "estimated_output_tokens": {"type": "integer"},
+        "image_generations": {"type": "integer"},
+        "video_generations": {"type": "integer"},
+        "regenerations": {"type": "integer"},
+        "budget_status": {"type": "string", "enum": ["within_limit", "warning", "exceeded"]}
+      }
+    },
+    "errors": {"type": "array"}
+  },
+  "required": ["metadata", "cost_ledger"]
+}

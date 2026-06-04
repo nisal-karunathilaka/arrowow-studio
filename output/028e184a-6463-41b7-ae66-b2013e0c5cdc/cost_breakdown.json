@@ -1,0 +1,30 @@
+{
+  "session_id": "028e184a-6463-41b7-ae66-b2013e0c5cdc",
+  "mode": "LLM_ONLY",
+  "billing_type": "Simulation (DRY_RUN)",
+  "itemized_costs": {
+    "gemini_llm_tokens": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "unit_price_per_1k_usd": 0.0,
+      "cost_usd": 0.0
+    },
+    "imagen3_image_generation": {
+      "count": 0,
+      "unit_price_usd": 0.0,
+      "cost_usd": 0.0
+    },
+    "google_tts_voiceover": {
+      "characters": 0,
+      "unit_price_per_char_usd": 0.0,
+      "cost_usd": 0.0
+    },
+    "veo_video_generation": {
+      "count": 0,
+      "unit_price_usd": 0.0,
+      "cost_usd": 0.0
+    }
+  },
+  "total_estimated_cost_usd": 0.0,
+  "budget_status": "within_limit"
+}

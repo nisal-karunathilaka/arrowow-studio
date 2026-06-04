@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "session_id": "1db44ee6-2835-4ccd-8d01-88e42ae6c356",
+    "mode": "DRY_RUN",
+    "status": "intake_approved",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {},
+  "pre_production": {},
+  "visual_plan": {},
+  "static_frame": {},
+  "production": {},
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 0,
+    "video_generations": 0,
+    "regenerations": 0,
+    "budget_status": "within_limit"
+  },
+  "errors": []
+}

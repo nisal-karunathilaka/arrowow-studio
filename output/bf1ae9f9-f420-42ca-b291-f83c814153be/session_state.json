@@ -1,0 +1,110 @@
+{
+  "metadata": {
+    "session_id": "bf1ae9f9-f420-42ca-b291-f83c814153be",
+    "mode": "LIVE_MEDIA",
+    "status": "pre_production_complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. She doesn't sell products directly; she seamlessly integrates them into her actual routine."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "angle": "Feel the confidence, embrace the comfort. Our sage green leggings are built for your toughest workouts, keeping you covered and focused, always. (Show dynamic movements, close-ups of fabric).",
+      "cta": "Stop scrolling, start sweating! Shop the Seamless Sage Green Leggings. Link in bio!",
+      "hook": "Sienna here, done with excuses! These Arrowow Active Seamless Sage Green Leggings? Totally squat-proof. Watch this! (Sienna does a deep squat, perfect form, no transparency).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "script_text": "Alright team, Sienna here, done with excuses! *Sienna adjusts her high ponytail, a quick, energetic smile.* Quick reality check: These Arrowow Active Seamless Sage Green Leggings? Seriously, totally squat-proof. Watch this! *Camera is selfie-style, slightly above eye-level. Sienna performs a deep, perfect form squat. The camera slightly shakes with her movement, with a quick zoom and close-up on the fabric around her glutes and thighs during the deepest part of the squat, demonstrating no transparency.*  See that? Flawless. No peek-a-boo where we don't want it! *Sienna stands back up, slightly breathless, wiping a small amount of sweat from her forehead. She transitions smoothly into a few dynamic lunges, then a high knee run in place. Frequent jump cuts highlight her movements and the leggings' flexibility.* Feeling this confidence, embracing this comfort... these are absolutely built for your toughest workouts. They keep you totally covered and laser-focused, always. *She takes a quick sip from her massive pastel Stanley cup, still holding the camera selfie-style.* So, if you're ready to stop scrolling, and start sweating \u2014 shop the Seamless Sage Green Leggings. Link in bio!",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": false,
+      "feedback": "The script contains the prohibited phrase \"Link in bio!\". Please remove this phrase to comply with the persona rules. The tone and energy are otherwise consistent with Sienna Bondi's persona.",
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {},
+  "static_frame": {},
+  "production": {},
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 0,
+    "video_generations": 0,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 0
+  },
+  "errors": []
+}

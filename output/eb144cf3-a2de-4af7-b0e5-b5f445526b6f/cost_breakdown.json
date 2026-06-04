@@ -1,0 +1,30 @@
+{
+  "session_id": "eb144cf3-a2de-4af7-b0e5-b5f445526b6f",
+  "mode": "LIVE_MEDIA",
+  "billing_type": "GCP Free Trial ($300)",
+  "itemized_costs": {
+    "gemini_llm_tokens": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "unit_price_per_1k_usd": 0.0,
+      "cost_usd": 0.0
+    },
+    "imagen3_image_generation": {
+      "count": 1,
+      "unit_price_usd": 0.03,
+      "cost_usd": 0.03
+    },
+    "google_tts_voiceover": {
+      "characters": 790,
+      "unit_price_per_char_usd": 1.6e-05,
+      "cost_usd": 0.01264
+    },
+    "veo_video_generation": {
+      "count": 1,
+      "unit_price_usd": 0.07,
+      "cost_usd": 0.07
+    }
+  },
+  "total_estimated_cost_usd": 0.11264,
+  "budget_status": "within_limit"
+}

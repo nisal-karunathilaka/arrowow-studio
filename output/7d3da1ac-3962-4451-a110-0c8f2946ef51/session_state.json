@@ -1,0 +1,162 @@
+{
+  "metadata": {
+    "session_id": "7d3da1ac-3962-4451-a110-0c8f2946ef51",
+    "mode": "LIVE_MEDIA",
+    "status": "pre_production_complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. She doesn't sell products directly; she seamlessly integrates them into her actual routine."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "angle": "No excuses, just results! These Seamless Sage Green Leggings are your workout warrior \u2013 100% squat-proof and ridiculously comfortable. Stop wishing, start doing! #ArrowowActive #SquatProof #NoExcuses",
+      "cta": "Ready to conquer your goals? Tap to shop now and feel the difference! \u27a1\ufe0f [Link to product/website]",
+      "hook": "Squatting into the week like a boss with Arrowow Active! \ud83d\udcaa",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "script": [
+        {
+          "timestamp": "0:00-0:03",
+          "visuals": "Sienna Bondi (athletic, lean build, messy blonde high ponytail), in a brightly lit modern gym with free weights. She's holding her phone selfie-style, slightly above eye level, with a slight handheld shake. She finishes a deep squat rep, looking empowered, then quickly adjusts her ponytail.",
+          "character_actions": [
+            "Adjusts her ponytail",
+            "Finishes a squat",
+            "Holds camera selfie-style"
+          ],
+          "dialogue": "Squatting into the week like a boss with Arrowow Active! \ud83d\udcaa",
+          "tone": "High energy, slightly breathless, encouraging, Australian (Sydney, casual, energetic) accent",
+          "pacing": "Fast and punchy"
+        },
+        {
+          "timestamp": "0:03-0:08",
+          "visuals": "Jump cut. Close-up on the Seamless Sage Green Leggings, then Sienna demonstrating a deep, full squat, emphasizing zero sheerness and full range of motion. Clean girl makeup, bright blue eyes fixed on the camera.",
+          "character_actions": [
+            "Performs a deep squat demonstrating the leggings' properties"
+          ],
+          "dialogue": "Alright team, Quick reality check: No excuses, just results! These Seamless Sage Green Leggings? Absolutely 100% squat-proof, and seriously, ridiculously comfortable.",
+          "tone": "Tough-love, authentic, energetic, Australian (Sydney, casual, energetic) accent",
+          "pacing": "Fast and punchy"
+        },
+        {
+          "timestamp": "0:08-0:12",
+          "visuals": "Jump cut. Sienna takes a sip from a massive pastel Stanley cup, making direct eye contact and nodding with a determined smile. Then, she casually wipes a small amount of sweat from her forehead.",
+          "character_actions": [
+            "Sips from pastel Stanley cup",
+            "Wipes sweat from forehead casually"
+          ],
+          "dialogue": "Stop wishing, start doing! We're not here to mess around. You gotta feel good to crush those goals, right?",
+          "tone": "Encouraging, genuine, slightly breathless, Australian (Sydney, casual, energetic) accent",
+          "pacing": "Fast and punchy"
+        },
+        {
+          "timestamp": "0:12-0:15",
+          "visuals": "Jump cut. Sienna performs a dynamic lunge, showcasing the incredible stretch and comfort of the leggings. The camera follows her movement dynamically.",
+          "character_actions": [
+            "Performs a dynamic lunge"
+          ],
+          "dialogue": "The comfort on these is insane. Gets you through every rep, no distractions. #ArrowowActive #SquatProof #NoExcuses",
+          "tone": "Enthusiastic, authentic, Australian (Sydney, casual, energetic) accent",
+          "pacing": "Fast and punchy"
+        },
+        {
+          "timestamp": "0:15-0:18",
+          "visuals": "Jump cut. Sienna looks directly into the camera with an encouraging yet firm smile. Her expression is determined, embodying the 'hype girl' vibe. Slight handheld shake persists.",
+          "character_actions": [],
+          "dialogue": "Ready to conquer your goals? Tap to shop now and feel the difference! \u27a1\ufe0f [Link to product/website]",
+          "tone": "Direct, motivating, Australian (Sydney, casual, energetic) accent",
+          "pacing": "Fast and punchy"
+        }
+      ],
+      "brand_safety_score": 1.0,
+      "approved": true
+    },
+    "text_critic_report": {
+      "approved": false,
+      "brand_safety_score": 1,
+      "feedback": "The script contains the phrase 'Tap to shop now', which is a direct call to action for purchasing. This goes against the persona's rule: 'She doesn't sell products directly; she seamlessly integrates them into her actual routine.' It is too similar in intent to the prohibited phrases like 'Buy this product now' and 'Link in bio'."
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {},
+  "static_frame": {},
+  "production": {},
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 0,
+    "video_generations": 0,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 0
+  },
+  "errors": []
+}

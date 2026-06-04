@@ -1,0 +1,290 @@
+{
+  "metadata": {
+    "session_id": "4fb4c980-8dc6-44da-a6aa-2d59d02e8027",
+    "mode": "LIVE_MEDIA",
+    "status": "complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. She doesn't sell products directly; she seamlessly integrates them into her actual routine."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "hook": "Ever wonder what moves with you, never holds you back? These do. No compromise. No distractions. Just pure power. Greatness isn't given; it's earned. Every single rep.",
+      "angle": "Elevate your workout with leggings designed to endure every rep alongside you. Experience the unparalleled squat-proof confidence and buttery-soft comfort that lets you push harder, not pull up your pants.",
+      "cta": "Gear up for your best workout yet. Explore the collection.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "project_name": "Antigravity Activewear",
+      "topic": "Fitness Leggings",
+      "title": "Unstoppable Workouts: My Go-To Leggings!",
+      "description": "Alright team, if you're serious about your workouts, you need leggings that keep up. I'm talking squat-proof, buttery-soft, no-distraction magic. These are it. Every rep, every set, pure confidence. Let's get after it!",
+      "length_seconds": 30,
+      "camera_style": {
+        "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+        "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+      },
+      "persona_details": {
+        "character_id": "sienna_fitness_01",
+        "persona_name": "Sienna Bondi",
+        "niche": "fitness",
+        "demographics": {
+          "gender": "female",
+          "age": 26,
+          "nationality": "Australian",
+          "accent": "Australian (Sydney, casual, energetic)"
+        },
+        "visual_identity": {
+          "latent_anchor_urls": [
+            "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+          ],
+          "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+          "wardrobe": [
+            "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+            "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+            "White chunky running shoes with high white socks."
+          ],
+          "settings": [
+            "Brightly lit modern gym with mirrors and free weights.",
+            "Sunny outdoor running track or beach promenade.",
+            "Minimalist aesthetic apartment living room with a yoga mat."
+          ]
+        },
+        "voice_identity": {
+          "elevenlabs_voice_id": "EXAVITQu4vr4xnSDxMaL",
+          "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+          "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+        },
+        "behavior_rules": {
+          "signature_actions": [
+            "Adjusting her ponytail or clipping her hair right before speaking.",
+            "Taking a sip from a massive pastel Stanley cup.",
+            "Wiping a small amount of sweat from her forehead casually.",
+            "Holding the camera in one hand (selfie-style) while walking."
+          ],
+          "prohibited_phrases": [
+            "Hello everyone",
+            "Welcome back to my channel",
+            "Buy this product now",
+            "Link in bio"
+          ],
+          "catchphrases": [
+            "Alright team,",
+            "Let's get after it today,",
+            "Quick reality check:"
+          ],
+          "vibe": "She is your hype girl and tough-love fitness bestie. She doesn't sell products directly; she seamlessly integrates them into her actual routine."
+        }
+      },
+      "scenes": [
+        {
+          "scene_id": "scene_1_hook",
+          "setting": "Brightly lit modern gym",
+          "action": "Sienna, still a bit breathless, holding phone selfie-style. Adjusts her messy ponytail, then takes a quick sip from her pastel Stanley cup.",
+          "dialogue": "Alright team, quick reality check: Ever wonder what moves with you, never holds you back? These do. No compromise. No distractions. Just pure power.",
+          "transcript_timing_start_ms": 0,
+          "transcript_timing_end_ms": 7000,
+          "overlays": []
+        },
+        {
+          "scene_id": "scene_2_squat_proof",
+          "setting": "Brightly lit modern gym (squat rack area)",
+          "action": "Jump cut. Sienna performs deep, confident squats. Close-up shot on her leggings, showing no sheerness or slippage. A slight handheld shake. Wipes a small amount of sweat from her forehead casually after a set.",
+          "dialogue": "Greatness isn't given; it's earned. Every single rep. You need gear that's as committed as you are. Seriously, these leggings? Completely squat-proof confidence. No pulling them up mid-set, trust me.",
+          "transcript_timing_start_ms": 7001,
+          "transcript_timing_end_ms": 17000,
+          "overlays": [
+            {
+              "type": "text",
+              "text": "SQUAT-PROOF CONFIDENCE",
+              "position": "center",
+              "font_size": "large"
+            }
+          ]
+        },
+        {
+          "scene_id": "scene_3_comfort_performance",
+          "setting": "Brightly lit modern gym (free weights area)",
+          "action": "Jump cut. Sienna transitions to lunges or deadlifts, moving fluidly and comfortably. Shows a quick frame of her hand brushing against the buttery-soft fabric. High energy, fast pacing.",
+          "dialogue": "And the comfort? Buttery-soft. It's like a second skin. When your activewear feels this good, you just push harder \u2013 no distractions, just pure focus on yourself. It makes all the difference.",
+          "transcript_timing_start_ms": 17001,
+          "transcript_timing_end_ms": 26000,
+          "overlays": [
+            {
+              "type": "text",
+              "text": "BUTTERY-SOFT COMFORT",
+              "position": "bottom",
+              "font_size": "medium"
+            }
+          ]
+        },
+        {
+          "scene_id": "scene_4_cta",
+          "setting": "Sunny outdoor running track or beach promenade",
+          "action": "Jump cut. Sienna walking purposefully, holding the camera selfie-style, energetic and encouraging.",
+          "dialogue": "Elevate your workout. Gear up for your best yet. You're going to love them.",
+          "transcript_timing_start_ms": 26001,
+          "transcript_timing_end_ms": 30000,
+          "overlays": [
+            {
+              "type": "text",
+              "text": "EXPLORE THE COLLECTION",
+              "position": "center",
+              "font_size": "large"
+            }
+          ]
+        }
+      ],
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "feedback": "The script successfully avoids all prohibited phrases and perfectly matches Sienna Bondi's high-energy, authentic, and 'hype girl' tone. The dialogue seamlessly integrates the product into her routine without direct selling, aligning with her persona.",
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "Sienna, still a bit breathless, holding phone selfie-style. Adjusts her messy ponytail, then takes a quick sip from her pastel Stanley cup.",
+          "camera": "Selfie-style, held slightly above eye level, intimate close-up on Sienna's face/upper body. Slight handheld shake. Captures her adjusting ponytail and sipping from the cup."
+        },
+        {
+          "scene": 2,
+          "action": "Jump cut. Sienna performs deep, confident squats. Close-up shot on her leggings, showing no sheerness or slippage. A slight handheld shake. Wipes a small amount of sweat from her forehead casually after a set.",
+          "camera": "Jump cut. Selfie-style shot, slightly above eye level, focusing on Sienna's leggings during deep squats to emphasize no sheerness. Camera then subtly tilts/pans up to capture her wiping sweat. Slight handheld shake, dynamic pacing, frequent jump cuts."
+        },
+        {
+          "scene": 3,
+          "action": "Jump cut. Sienna transitions to lunges or deadlifts, moving fluidly and comfortably. Shows a quick frame of her hand brushing against the buttery-soft fabric. High energy, fast pacing.",
+          "camera": "Jump cut. Selfie-style, slightly above eye level, capturing Sienna doing lunges/deadlifts. Includes a quick, tight shot of her hand brushing the fabric of the leggings. Slight handheld shake, high energy, fast pacing, frequent jump cuts."
+        },
+        {
+          "scene": 4,
+          "action": "Jump cut. Sienna walking purposefully, holding the camera selfie-style, energetic and encouraging.",
+          "camera": "Jump cut. Selfie-style, held slightly above eye level, capturing Sienna walking purposefully and talking energetically. Slight handheld shake, dynamic pacing, frequent jump cuts."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Brightly lit modern gym with mirrors and free weights.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "Prompt": "An athletic young woman, Sienna, with a messy ponytail, is captured in a dynamic, high-energy sequence within a brightly lit modern gym, featuring prominent mirrors and free weights. She wears a seamless, pastel-colored activewear set (Gymshark/Lululemon style), with a specific focus on her non-sheer, non-slipping, and buttery-soft leggings. The imagery shows her in various athletic poses, performing deep squats, lunges, or deadlifts, exuding confidence and fluidity. Details include her casually wiping sweat, a quick close-up of her hand brushing the fabric, and a moment where she briefly sips from a pastel Stanley cup while still slightly breathless. The visual style is selfie-mode, slightly above eye level, with a subtle handheld shake, aiming for an intimate, energetic, and engaging feel with implied dynamic and fast pacing.",
+      "ImageName": "sienna_gym_workout",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "",
+    "provider": "live",
+    "asset_uri": "error.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {
+    "model_route": "mock_direct_dialogue",
+    "generated_video_uri": "error.mp4",
+    "generated_audio_uri": "error.mp3",
+    "video_critic_report": {
+      "approved": true,
+      "feedback": "Motion is smooth, lip sync is accurate.",
+      "artifact_risk": "low"
+    }
+  },
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 1,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 0
+  },
+  "errors": []
+}

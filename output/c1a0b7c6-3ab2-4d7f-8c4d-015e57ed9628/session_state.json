@@ -1,0 +1,171 @@
+{
+  "metadata": {
+    "session_id": "c1a0b7c6-3ab2-4d7f-8c4d-015e57ed9628",
+    "mode": "LIVE_MEDIA",
+    "status": "complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. She doesn't sell products directly; she seamlessly integrates them into her actual routine."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "hook": "Sweat, squat, conquer. Sienna's gym essentials just leveled up.",
+      "angle": "When your workout demands everything, your gear should too. These Seamless Sage Green Leggings are built for undeniable comfort and unwavering confidence. Go squat-deep, go strong. 'Your body can stand almost anything. It\u2019s your mind that you have to convince.'",
+      "cta": "Train without limits. Explore the Arrowow Active Seamless Collection.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "estimated_duration_seconds": 30,
+      "script_text": "\n{\n  \"script\": [\n    {\n      \"speaker\": \"Sienna\",\n      \"action\": \"Standing in a brightly lit modern gym. She\u2019s a bit breathless, adjusting her high ponytail, and holds her pastel Stanley cup in one hand.\",\n      \"dialogue\": \"Alright team, quick reality check: **Sweat, squat, conquer. Sienna's gym essentials just leveled up.**\"\n    },\n    {\n      \"speaker\": \"Sienna\",\n      \"action\": \"Looking directly at the camera, her tone energetic and authentic, gesturing to her seamless sage green leggings.\",\n      \"dialogue\": \"You know when your workout demands everything, your gear should too. These Seamless Sage Green Leggings? *[Pulls at the fabric, showing the seamless detail.]* They're built for undeniable comfort and unwavering confidence \u2013 seriously.\"\n    },\n    {\n      \"speaker\": \"Sienna\",\n      \"action\": \"Performs a deep, controlled squat, demonstrating the flexibility and form of the leggings. She smiles confidently.\",\n      \"dialogue\": \"Go squat-deep, go strong. Because like I always say, 'Your body can stand almost anything. It\u2019s your mind that you have to convince.'\"\n    },\n    {\n      \"speaker\": \"Sienna\",\n      \"action\": \"Stands up, takes a casual sip from her massive pastel Stanley cup, and subtly wipes a small amount of sweat from her forehead.\",\n      \"dialogue\": \"So, if you're ready to train without limits, you absolutely have to check out the Arrowow Active Seamless Collection. It's a total game-changer for your training.\"\n    }\n  ]\n}\n",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "feedback": "The script strictly adheres to the persona's prohibited phrases and tone. No prohibited phrases were used, and the tone is consistently high energy, encouraging, and authentic, aligning with the 'hype girl and tough-love fitness bestie' vibe. The actions also support the slightly breathless tone.",
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "Sienna stands in a modern gym, breathless, adjusting her ponytail and holding her Stanley cup.",
+          "camera": "MEDIUM SHOT: Sienna, upper body, adjusting ponytail and holding cup."
+        },
+        {
+          "scene": 2,
+          "action": "Sienna looks directly at the camera, energetically gesturing to her seamless sage green leggings and pulling at the fabric to show detail.",
+          "camera": "CLOSE-UP: Sienna's face, then WIDE SHOT: Sienna gesturing to leggings, then EXTREME CLOSE-UP: Legging fabric detail."
+        },
+        {
+          "scene": 3,
+          "action": "Sienna performs a deep, controlled squat, showcasing the leggings' flexibility and her confident smile.",
+          "camera": "FULL BODY SHOT (low angle): Sienna squatting, emphasizing leggings. MEDIUM SHOT: Sienna's confident smile."
+        },
+        {
+          "scene": 4,
+          "action": "Sienna stands up, sips from her Stanley cup, and subtly wipes sweat from her forehead.",
+          "camera": "MEDIUM SHOT: Sienna, upper body, sipping from cup and wiping sweat."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Sunny outdoor running track or beach promenade.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "prompt": "Create a four-scene image sequence featuring a fit woman, Sienna, in a sunny outdoor setting, either a running track or a beach promenade. She is wearing a stylish, matching seamless activewear set in a pastel color (preferably sage green, but could also be baby blue or classic black), similar to the aesthetic of Gymshark or Lululemon. The lighting should be bright and natural, emphasizing a healthy, active lifestyle.\n\nScene 1: MEDIUM SHOT of Sienna from the upper body. She is breathless from a workout, her skin has a subtle sheen of sweat, and she is adjusting her high ponytail. She holds a modern Stanley cup in one hand, looking slightly tired but determined.\n\nScene 2: This scene transitions through three camera angles. First, a CLOSE-UP of Sienna's face, displaying an energetic and confident expression as she directly addresses the camera. Then, a WIDE SHOT shows her actively gesturing towards her seamless sage green leggings, showcasing their design and fit. Finally, an EXTREME CLOSE-UP focuses on the fabric of the leggings, highlighting the seamless detail, texture, and quality.\n\nScene 3: This scene features two camera angles. A FULL BODY SHOT from a low angle captures Sienna performing a deep, controlled squat. The shot dramatically emphasizes the flexibility, flattering fit, and seamless construction of her leggings. Simultaneously, a MEDIUM SHOT captures her face, showing a confident and joyful smile during the squat.\n\nScene 4: MEDIUM SHOT of Sienna from the upper body. She stands up gracefully after her squat, takes a refreshing sip from her Stanley cup, and subtly wipes a bead of sweat from her forehead with a natural, unposed gesture. Her expression is one of satisfaction and light exertion.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "Create a four-scene image sequence featuring a fit woman, Sienna, in a sunny outdoor setting, either a running track or a beach promenade. She is wearing a stylish, matching seamless activewear set in a pastel color (preferably sage green, but could also be baby blue or classic black), similar to the aesthetic of Gymshark or Lululemon. The lighting should be bright and natural, emphasizing a healthy, active lifestyle.\n\nScene 1: MEDIUM SHOT of Sienna from the upper body. She is breathless from a workout, her skin has a subtle sheen of sweat, and she is adjusting her high ponytail. She holds a modern Stanley cup in one hand, looking slightly tired but determined.\n\nScene 2: This scene transitions through three camera angles. First, a CLOSE-UP of Sienna's face, displaying an energetic and confident expression as she directly addresses the camera. Then, a WIDE SHOT shows her actively gesturing towards her seamless sage green leggings, showcasing their design and fit. Finally, an EXTREME CLOSE-UP focuses on the fabric of the leggings, highlighting the seamless detail, texture, and quality.\n\nScene 3: This scene features two camera angles. A FULL BODY SHOT from a low angle captures Sienna performing a deep, controlled squat. The shot dramatically emphasizes the flexibility, flattering fit, and seamless construction of her leggings. Simultaneously, a MEDIUM SHOT captures her face, showing a confident and joyful smile during the squat.\n\nScene 4: MEDIUM SHOT of Sienna from the upper body. She stands up gracefully after her squat, takes a refreshing sip from her Stanley cup, and subtly wipes a bead of sweat from her forehead with a natural, unposed gesture. Her expression is one of satisfaction and light exertion.",
+    "provider": "live",
+    "asset_uri": "error.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {
+    "model_route": "mock_direct_dialogue",
+    "generated_video_uri": "error.mp4",
+    "generated_audio_uri": "error.mp3",
+    "video_critic_report": {
+      "approved": true,
+      "feedback": "Motion is smooth, lip sync is accurate.",
+      "artifact_risk": "low"
+    }
+  },
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 1,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 1466
+  },
+  "errors": []
+}

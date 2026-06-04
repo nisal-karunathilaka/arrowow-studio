@@ -1,0 +1,192 @@
+{
+  "metadata": {
+    "session_id": "aa659c98-c270-4393-870b-e9591913f2c3",
+    "mode": "LIVE_MEDIA",
+    "status": "production_complete",
+    "current_stage": "initialized"
+  },
+  "brief": {
+    "brand_name": "Arrowow Active",
+    "product_name": "Seamless Sage Green Leggings",
+    "campaign_goal": "Drive conversions by showing the squat-proof quality and comfort during a real workout.",
+    "target_platform": "instagram_reels",
+    "duration_seconds": 8,
+    "language": "English",
+    "raw_user_brief": "I need a high-energy hook showing Sienna at the gym. She needs to show off the green leggings, do a quick squat to show they are squat proof, and give a tough-love motivational quote."
+  },
+  "character": {
+    "character_id": "sienna_fitness_01",
+    "persona_name": "Sienna Bondi",
+    "niche": "fitness",
+    "demographics": {
+      "gender": "female",
+      "age": 26,
+      "nationality": "Australian",
+      "accent": "Australian (Sydney, casual, energetic)"
+    },
+    "visual_identity": {
+      "latent_anchor_urls": [
+        "./app/persona_vault/sienna_fitness_01/anchor_front.png"
+      ],
+      "appearance": "Athletic, lean build. Sun-kissed skin. Messy blonde hair, usually styled in a high ponytail, messy bun, or clipped back with a claw clip. Bright blue eyes, minimal 'clean girl' makeup.",
+      "wardrobe": [
+        "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+        "Oversized vintage graphic t-shirts (pump covers) worn over biker shorts.",
+        "White chunky running shoes with high white socks."
+      ],
+      "settings": [
+        "Brightly lit modern gym with mirrors and free weights.",
+        "Sunny outdoor running track or beach promenade.",
+        "Minimalist aesthetic apartment living room with a yoga mat."
+      ]
+    },
+    "voice_identity": {
+      "elevenlabs_voice_id": "en-AU-Neural2-A",
+      "tone": "High energy, encouraging, highly authentic. Often sounds slightly breathless, as if she just finished a set or is on a walk.",
+      "pacing": "Fast and punchy, optimized for high-retention TikTok/Reels algorithms."
+    },
+    "behavior_rules": {
+      "signature_actions": [
+        "Adjusting her ponytail or clipping her hair right before speaking.",
+        "Taking a sip from a massive pastel Stanley cup.",
+        "Wiping a small amount of sweat from her forehead casually.",
+        "Holding the camera in one hand (selfie-style) while walking."
+      ],
+      "prohibited_phrases": [
+        "Hello everyone",
+        "Welcome back to my channel",
+        "Buy this product now",
+        "Link in bio"
+      ],
+      "catchphrases": [
+        "Alright team,",
+        "Let's get after it today,",
+        "Quick reality check:"
+      ],
+      "vibe": "She is your hype girl and tough-love fitness bestie. IMPORTANT FOR VIDEO: Ensure all scenes use her voice as a *voiceover* (B-roll style) while she performs actions in the video, rather than her talking directly to the camera with lip sync. This creates a highly professional, cinematic, and natural UGC feel."
+    },
+    "camera_style": {
+      "angle": "Selfie-style, held slightly above eye level. Intimate and close.",
+      "movement": "Slight handheld shake, dynamic pacing, frequent jump cuts to remove dead air."
+    },
+    "locked": true
+  },
+  "pre_production": {
+    "strategy": {
+      "angle": "High-energy gym motivation showing Sienna putting the Seamless Sage Green Leggings to the ultimate squat test, demonstrating 100% squat-proof confidence and premium athletic support.",
+      "cta": "Grab your pair of Seamless Sage Green Leggings at Arrowow Active to dominate your next leg day.",
+      "hook": "Stop scrolling and watch this. If your leggings go sheer the second you drop into a squat, you're wearing the wrong gear. No excuses\u2014upgrade your standards and your workout.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "script": {
+      "script_text": "STOP scrolling and watch this... If your leggings go sheer the second you drop into a squat... you're wearing the WRONG gear... No excuses... upgrade your standards and your workout... Quick reality check:... watch this... We are putting these Seamless Sage Green Leggings to the ULTIMATE squat test... Dropping all the way down... see that? ... ONE HUNDRED PERCENT squat-proof confidence... and PREMIUM athletic support... This high-performance premium fabric is engineered for zero distractions... so you can focus completely on your GAINS... NOT your gear... Alright team... let's get after it today... Grab your pair of Seamless Sage Green Leggings at Arrowow Active... to DOMINATE your next leg day!",
+      "estimated_duration_seconds": 42,
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "text_critic_report": {
+      "approved": true,
+      "brand_safety_score": 1,
+      "feedback": "The script strictly avoids all prohibited phrases, matches the high-energy and encouraging tone, and naturally integrates signature catchphrases ('Alright team', 'Let's get after it today', 'Quick reality check')."
+    },
+    "approval_gate_1": {
+      "status": "pending"
+    }
+  },
+  "visual_plan": {
+    "storyboard": {
+      "scenes": [
+        {
+          "scene": 1,
+          "action": "The dynamic presenter stands in a bright, modern gym setting, pointing energetically at the camera while making direct and engaging eye contact.",
+          "camera": "Medium close-up shot, eye-level, starting with a rapid punch-in to command immediate attention."
+        },
+        {
+          "scene": 2,
+          "action": "A fast-cut comparison showing a competitor's flimsy fabric stretching thin and becoming sheer during a squat, with a subtle 'WRONG' text graphic overlay.",
+          "camera": "Close-up on the waistband and hips, low-angle, capturing the transparency issue clearly."
+        },
+        {
+          "scene": 3,
+          "action": "The presenter proudly turns around, brushing their hands down the high-quality Seamless Sage Green Leggings, showing off the sleek, opaque texture.",
+          "camera": "Medium shot, 360-degree panning camera movement around the presenter to showcase fit and premium fabric."
+        },
+        {
+          "scene": 4,
+          "action": "The presenter sets their stance, gets into position, and prepares to drop into a deep squat.",
+          "camera": "Side profile shot, wide angle, capturing the presenter's entire form in the gym environment."
+        },
+        {
+          "scene": 5,
+          "action": "The presenter performs a deep, full-range squat, showing the fabric stretching but remaining completely opaque and holding its structured shape.",
+          "camera": "Extreme close-up on the posterior and hip area during the lowest point of the squat to verify absolute opacity."
+        },
+        {
+          "scene": 6,
+          "action": "The presenter hovers at the peak stretch of the squat, then powers back up to a standing position with a victorious, confident smile.",
+          "camera": "Low-angle medium shot, tracking the upward movement with a slight camera tilt."
+        },
+        {
+          "scene": 7,
+          "action": "A dynamic montage of high-intensity movements: the presenter doing aggressive box jumps and lateral lunges, showing zero slipping, sagging, or fabric adjusting.",
+          "camera": "Fast-paced tracking shots, handheld, with quick whip-pans to match the high energy of the workout."
+        },
+        {
+          "scene": 8,
+          "action": "The presenter walks confidently toward the camera, pointing directly at the viewer with an inspiring smile, as the 'Arrowow Active' website and shop logo appear as a clean screen overlay.",
+          "camera": "Medium close-up shot, eye-level, with a soft depth of field focusing on the presenter and blurring the gym background."
+        }
+      ]
+    },
+    "wardrobe_location": {
+      "location": "Brightly lit modern gym with mirrors and free weights.",
+      "wardrobe": "Matching seamless activewear sets (pastel colors like sage green, baby blue, or classic black - Gymshark/Lululemon aesthetic).",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "static_frame_prompt": {
+      "static_frame_prompt": "A highly detailed, professional commercial photograph of an athletic and confident female presenter in a bright, modern gym setting equipped with large mirrors, racks of free weights, and clean lighting. She is wearing a matching premium quality, high-waisted seamless activewear set in a pastel sage green color with a Gymshark or Lululemon aesthetic, highlighting the thick, premium-quality, completely opaque fabric and its sleek, form-fitting texture. The presenter stands dynamically, making direct, engaging eye contact with the camera with a confident, inspiring smile, showing off the sleek fit of the sage green leggings. Shot on a professional DSLR camera at eye-level with a medium shot composition, using an 85mm lens at f/1.8 to create a soft depth of field that beautifully blurs the background gym environment while bringing the high-quality activewear texture, rich pastel color, and athletic posture into sharp focus.",
+      "approved": true,
+      "brand_safety_score": 1.0
+    },
+    "approval_gate_2a": {
+      "status": "pending"
+    }
+  },
+  "static_frame": {
+    "prompt": "A highly detailed, professional commercial photograph of an athletic and confident female presenter in a bright, modern gym setting equipped with large mirrors, racks of free weights, and clean lighting. She is wearing a matching premium quality, high-waisted seamless activewear set in a pastel sage green color with a Gymshark or Lululemon aesthetic, highlighting the thick, premium-quality, completely opaque fabric and its sleek, form-fitting texture. The presenter stands dynamically, making direct, engaging eye contact with the camera with a confident, inspiring smile, showing off the sleek fit of the sage green leggings. Shot on a professional DSLR camera at eye-level with a medium shot composition, using an 85mm lens at f/1.8 to create a soft depth of field that beautifully blurs the background gym environment while bringing the high-quality activewear texture, rich pastel color, and athletic posture into sharp focus.",
+    "provider": "live",
+    "asset_uri": "output/aa659c98-c270-4393-870b-e9591913f2c3/sienna_frame_0588c8.png",
+    "image_critic_report": {
+      "approved": true,
+      "feedback": "Image geometry matches reference anchor perfectly.",
+      "fidelity_score": 0.95
+    },
+    "approval_gate_2b": {
+      "status": "pending"
+    }
+  },
+  "production": {
+    "model_route": "mock_direct_dialogue",
+    "generated_video_uri": "output/aa659c98-c270-4393-870b-e9591913f2c3/veo_final_a8b8be.mp4",
+    "generated_audio_uri": "",
+    "synced_video_uri": "output/aa659c98-c270-4393-870b-e9591913f2c3/veo_final_a8b8be.mp4",
+    "video_critic_report": {
+      "approved": false,
+      "feedback": "The video completely fails in lip synchronization. The subject is addressing the camera directly, yet her lips do not move at all while the audio is playing. Furthermore, her facial expression remains unnaturally static and her body movements are stiff, resulting in a significant uncanny valley effect. This lack of basic animation for speech makes the video unusable.",
+      "production_grade_score": 1
+    }
+  },
+  "post_production": {},
+  "cost_ledger": {
+    "estimated_input_tokens": 0,
+    "estimated_output_tokens": 0,
+    "image_generations": 1,
+    "video_generations": 1,
+    "regenerations": 0,
+    "budget_status": "within_limit",
+    "tts_characters": 0
+  },
+  "errors": []
+}
