@@ -1,0 +1,25 @@
+# Secrets — NEVER commit credentials (rotate the key already in history: see docs/claude/current_status.md §8)
+google-credentials.json
+*.key
+*.pem
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+venv/
+venv_system/
+.venv/
+
+# Generated media & session artifacts
+output/
+*.mp4
+*.mp3
+*.png
+
+# OS noise
+.DS_Store

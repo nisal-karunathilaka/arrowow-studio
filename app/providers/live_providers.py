@@ -87,7 +87,7 @@ class GoogleTTSProvider:
             return {"uri": "error.mp3", "status": "failed"}
 
 class VeoVideoProvider:
-    def generate_video(self, prompt: str, reference_image: str = None, output_dir: str = None) -> dict:
+    def generate_video(self, prompt: str, reference_image: str = None, output_dir: str = None, seed: int = None) -> dict:
         print("[VeoVideoProvider] Generating video using Veo 3.1...")
         try:
             from google import genai
@@ -135,14 +135,18 @@ class VeoVideoProvider:
             
             config_params = {
                 "output_gcs_uri": output_gcs_uri,
-                "aspect_ratio": "16:9", # 16:9 supported by current Veo version
+                "aspect_ratio": "16:9",
                 "person_generation": "ALLOW_ADULT",
                 "generate_audio": True,
+                # Veo 3.1 caps at 8 seconds for BOTH Text-to-Video [4,6,8] and Image-to-Video [8]
                 "duration_seconds": 8,
             }
             
+            # Seed locking for character consistency
+            if seed is not None:
+                config_params["seed"] = seed
+
             if input_gcs_uri:
-                # the new genai SDK requires reference images in the config
                 config_params["reference_images"] = [
                     types.VideoGenerationReferenceImage(
                         image=types.Image(gcs_uri=input_gcs_uri, mime_type="image/png"),

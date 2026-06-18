@@ -44,7 +44,7 @@ class VisualPlanningPipeline:
         prompts = None
         for attempt in range(3):
             try:
-                prompts = self.prompt_eng.generate(storyboard, wl)
+                prompts = self.prompt_eng.generate(storyboard, wl, persona)
                 break
             except ValueError as e:
                 print(f"[VisualPlanning] Prompt generation failed attempt {attempt+1}/3. Retrying...")

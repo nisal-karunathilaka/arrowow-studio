@@ -61,37 +61,27 @@ class ProductionPipeline:
             
         image_anchor = self.bb.get("static_frame", {}).get("asset_uri", "")
         
-        # Use visual plan prompt for Veo Video generation instead of just dialogue script
-        visual_plan_prompt = self.bb.get("visual_plan", {}).get("static_frame_prompt", {})
-        video_prompt = None
-        
-        if isinstance(visual_plan_prompt, str):
-            video_prompt = visual_plan_prompt
-        elif isinstance(visual_plan_prompt, dict):
-            video_prompt = (visual_plan_prompt.get("static_frame_prompt") or 
-                            visual_plan_prompt.get("prompt") or 
-                            visual_plan_prompt.get("description") or 
-                            visual_plan_prompt.get("image_generation_prompt") or 
-                            visual_plan_prompt.get("image_prompt") or 
-                            visual_plan_prompt.get("visual_prompt"))
-            if isinstance(video_prompt, dict):
-                video_prompt = json.dumps(video_prompt)
-        
-        if not video_prompt:
-            video_prompt = script if isinstance(script, str) else json.dumps(script)
-            
+        # Use visual plan prompts for Veo Video generation
+        visual_plan_data = self.bb.get("visual_plan", {}).get("static_frame_prompt", {})
+        if isinstance(visual_plan_data, dict):
+            prompt_a = visual_plan_data.get("static_frame_prompt", "")
+            prompt_b = visual_plan_data.get("b_roll_prompt", "")
+        else:
+            prompt_a = str(visual_plan_data)
+            prompt_b = prompt_a
+
         import re
         import os
         import subprocess
         from .cost_ledger import CostLedger
         ledger = CostLedger(self.bb)
         
-        # Frames-to-Video Chaining
+        # Pure Text-to-Video A-Roll / B-Roll Sequence
         generated_videos = []
-        current_anchor = image_anchor
+        GENERATION_SEED = 427819
         
         if script and self.mode == "LIVE_MEDIA":
-            # Handle script if it's a dict (it might be {script_text: ...} or {scenes: [{audio: {script: ...}}]})
+            # Handle script if it's a dict
             script_str = ""
             if isinstance(script, dict):
                 if "script_text" in script:
@@ -110,60 +100,57 @@ class ProductionPipeline:
             else:
                 script_str = str(script)
                 
-            # Split into chunks of roughly 15-25 words
-            raw_segments = [s.strip() for s in re.split(r'\.\.\.', script_str) if s.strip()]
-            chunks = []
-            current_chunk = ""
-            for seg in raw_segments:
-                if len(current_chunk.split()) + len(seg.split()) > 20 and current_chunk:
-                    chunks.append(current_chunk + "...")
-                    current_chunk = seg
-                else:
-                    current_chunk = (current_chunk + "..." + seg).strip('.') if current_chunk else seg
-            if current_chunk:
-                chunks.append(current_chunk + "...")
-        for i, chunk in enumerate(chunks):
-            chunk_prompt = video_prompt
-            if chunk and self.mode == "LIVE_MEDIA":
-                chunk_prompt = (
-                    f"{video_prompt}\n\n"
-                    f"Strictly no captions, no subtitles, clear on-screen visual field.\n"
-                    f"Audio Constraints: The speaker has a clear, energetic 25-year-old female voice with a strict native Australian female accent. They speak at a steady, calm tempo with natural breathing rhythms and realistic jaw cadence. No background music, zero sound effects.\n"
-                    f"(Sienna: \"{chunk}\")"
-                )
+            # Split script in half for A-Roll and B-Roll
+            words = script_str.split()
+            mid = len(words) // 2
+            chunk_a = " ".join(words[:mid])
+            chunk_b = " ".join(words[mid:])
             
-            print(f"[Production] Generating chunk {i+1}/{len(chunks)} for Frames-to-Video chaining...")
+            shots = [
+                {"type": "A-Roll", "prompt": prompt_a, "dialogue": f"(Sienna: \"{chunk_a}\")"},
+                {"type": "B-Roll", "prompt": prompt_b, "dialogue": f"(Voiceover: \"{chunk_b}\")"}
+            ]
             
-            chunk_video_uri = ""
-            max_retries = 3
-            for attempt in range(max_retries):
-                video_res = self.video_provider.generate_video(chunk_prompt, current_anchor, output_dir=self.bb.session_dir)
-                ledger.add_video_generation()
+            for i, shot in enumerate(shots):
+                if not shot["prompt"]:
+                    shot["prompt"] = "A highly detailed cinematic shot of Sienna."
                 
-                chunk_video_uri = video_res.get("uri", "")
-                if chunk_video_uri:
+                final_prompt = (
+                    f"{shot['prompt']}\n\n"
+                    f"Strictly no captions, no subtitles, clear on-screen visual field.\n"
+                    f"Audio Constraints: The speaker has a clear, energetic 25-year-old female voice with a strict native Australian female accent. They speak at a steady, calm tempo. No background music.\n"
+                    f"{shot['dialogue']}"
+                )
+                
+                print(f"[Production] Generating {shot['type']}...")
+                
+                chunk_video_uri = ""
+                max_retries = 3
+                
+                # Apply Seed Locking only to the A-Roll (talking head). 
+                # Applying the same seed to a radically different composition (B-Roll action shot) 
+                # causes the Veo latent space to warp and melt the subject.
+                current_seed = GENERATION_SEED if shot['type'] == "A-Roll" else None
+                
+                for attempt in range(max_retries):
+                    video_res = self.video_provider.generate_video(
+                        prompt=final_prompt, 
+                        reference_image=None,  # Pure Text-to-Video ensures pristine physics
+                        output_dir=self.bb.session_dir,
+                        seed=current_seed
+                    )
+                    ledger.add_video_generation()
+                    
+                    chunk_video_uri = video_res.get("uri", "") if isinstance(video_res, dict) else ""
+                    if chunk_video_uri:
+                        break
+                    else:
+                        print(f"[Production] Attempt {attempt+1}/{max_retries} failed. Retrying...")
+                
+                if not chunk_video_uri:
+                    print(f"[Production] Failed to generate {shot['type']} after {max_retries} attempts.")
                     break
-                else:
-                    print(f"[Production] Attempt {attempt+1}/{max_retries} failed. Retrying...")
-            
-            if not chunk_video_uri:
-                print(f"[Production] Failed to generate video chunk {i+1} after {max_retries} attempts.")
-                break
-            generated_videos.append(chunk_video_uri)
-            # Extract last frame for next chunk's anchor (if not last chunk)
-            if i < len(chunks) - 1 and self.mode == "LIVE_MEDIA":
-                next_anchor = os.path.join(self.bb.session_dir, f"anchor_frame_{i}.png")
-                # Use ffmpeg to get the exact last frame using -sseof -0.1
-                cmd = [
-                    "ffmpeg", "-y", "-sseof", "-0.1", "-i", chunk_video_uri,
-                    "-update", "1", "-q:v", "2", next_anchor
-                ]
-                subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                if os.path.exists(next_anchor):
-                    print(f"[Production] Extracted last frame for next chunk anchor: {next_anchor}")
-                    current_anchor = next_anchor
-                else:
-                    print(f"[Production] WARNING: Failed to extract last frame from {chunk_video_uri}")
+                generated_videos.append(chunk_video_uri)
 
         video_uri = ""
         if len(generated_videos) == 1:
