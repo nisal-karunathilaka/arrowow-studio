@@ -49,6 +49,44 @@ class DefectRemedyKB:
                                  "regenerate the failing segment with reinforced directives")
 
 
+def resolve_segment_to_beat(seg: str) -> str:
+    """Parse time-range or timestamp segment names (e.g., '00:03-00:07' or '12s')
+    from the QA critic into the matching beat ID."""
+    if not seg:
+        return "global"
+    seg_lower = str(seg).lower()
+    for bid in ["hook", "intro", "action", "proof", "cta"]:
+        if bid in seg_lower:
+            return bid
+    # Try parsing mm:ss or hh:mm:ss timestamp range
+    import re
+    matches = re.findall(r"(\d+):(\d+)", seg_lower)
+    if matches:
+        try:
+            m, s = map(int, matches[0])
+            sec = m * 60 + s
+            if sec < 8: return "hook"
+            elif sec < 16: return "intro"
+            elif sec < 24: return "action"
+            elif sec < 32: return "proof"
+            else: return "cta"
+        except Exception:
+            pass
+    # Try parsing raw seconds e.g. "12s" or "12 seconds"
+    sec_matches = re.findall(r"(\d+)\s*(?:s|sec|second)", seg_lower)
+    if sec_matches:
+        try:
+            sec = int(sec_matches[0])
+            if sec < 8: return "hook"
+            elif sec < 16: return "intro"
+            elif sec < 24: return "action"
+            elif sec < 32: return "proof"
+            else: return "cta"
+        except Exception:
+            pass
+    return "global"
+
+
 class AdversarialRefiner(BaseAgent):
     """Generator-update step of the adversarial loop. Runs right after the QA discriminator
     inside the production critic LoopAgent."""
@@ -75,9 +113,11 @@ class AdversarialRefiner(BaseAgent):
             return
 
         worst = defects[0]
-        dtype, seg = worst.get("type"), worst.get("segment", "global")
+        dtype = worst.get("type")
+        raw_seg = worst.get("segment", "global")
+        seg = resolve_segment_to_beat(raw_seg)
         remedy = self.kb.retrieve(dtype)
-        ctx.log(f"    [AdversarialRefiner] worst defect: {dtype}@{seg} (sev {worst.get('severity')}) "
+        ctx.log(f"    [AdversarialRefiner] worst defect: {dtype}@{raw_seg} (resolved={seg}) (sev {worst.get('severity')}) "
                 f"-> remedy: {remedy[:70]}...")
 
         # Targeted beat refinement via STRUCTURED flags (no raw prompt-text append, which
@@ -85,15 +125,31 @@ class AdversarialRefiner(BaseAgent):
         beats = ctx.state.get("beat_prompts", {}).get("beats", [])
         target = next((b for b in beats if b.get("beat_id") == seg), None)
         if target is not None:
-            if dtype in ("lip_sync", "vocal_audio") and target.get("sync_mode") == "native":
-                target["sync_mode"] = "voiceover"
-            elif dtype == "hyperrealism":
+            if dtype in ("lip_sync", "vocal_audio"):
+                if target.get("sync_mode") == "native":
+                    target["sync_mode"] = "voiceover"
+                else:
+                    target["_seed_jitter"] = target.get("_seed_jitter", 0) + 1
+            elif dtype in ("hyperrealism", "color"):
                 target["_realism_boost"] = True
+                target["_color_flatten"] = True
             elif dtype in ("artifact", "identity_drift"):
                 target["_seed_jitter"] = target.get("_seed_jitter", 0) + 1
             media_tools.make_render_beat_stage(seg)(ctx)  # re-render the single beat
         else:
-            ctx.log(f"    [AdversarialRefiner] global defect ({dtype}) -> post-production re-pass")
+            ctx.log(f"    [AdversarialRefiner] global defect ({dtype}) -> adjusting post-production grading")
+            vf_params = ctx.state.setdefault("compositor_vf_params", {
+                "noise": 7, "saturation": 0.92, "contrast": 0.98, "brightness": -0.01
+            })
+            if dtype == "color":
+                vf_params["saturation"] = max(0.5, vf_params["saturation"] - 0.08)
+                vf_params["contrast"] = max(0.8, vf_params["contrast"] - 0.03)
+                ctx.log(f"      -> reduced saturation to {vf_params['saturation']:.2f}, contrast to {vf_params['contrast']:.2f}")
+            elif dtype == "hyperrealism":
+                vf_params["noise"] = min(15, vf_params["noise"] + 3)
+                vf_params["saturation"] = max(0.5, vf_params["saturation"] - 0.05)
+                vf_params["contrast"] = max(0.8, vf_params["contrast"] - 0.05)
+                ctx.log(f"      -> increased noise to {vf_params['noise']}, saturation to {vf_params['saturation']:.2f}")
 
         # Re-composite so the next QA pass sees the corrected master.
         compositor.composite_timeline(ctx)

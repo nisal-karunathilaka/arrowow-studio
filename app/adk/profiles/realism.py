@@ -67,6 +67,7 @@ UGC_REALISM = RealismProfile(
         "available/natural light (window, sun, gym practicals)",
         "slightly uneven exposure, natural soft shadows",
         "mixed color temperature, not studio-perfect",
+        "flat desaturated color science, neutral white balance, raw phone camera colors",
     ],
     motion=[
         "natural human movement with slight imperfection",
@@ -88,5 +89,7 @@ UGC_REALISM = RealismProfile(
         "glossy cinematic color grade", "floaty unnatural motion",
         "studio three-point lighting", "HDR over-sharpening",
         "captions, subtitles, watermark, on-screen text",
+        "saturated colors", "vibrant color grading", "cinematic teal and orange LUT",
+        "studio-graded look", "high-contrast color pop",
     ],
 )

@@ -42,21 +42,26 @@ def _apply_remedy(beat: dict, defect: dict, kb: DefectRemedyKB, log) -> str:
     bloat the prompt and can trip Vertex RAI)."""
     dtype, sev = defect.get("type"), int(defect.get("severity", 0))
     remedy = kb.retrieve(dtype)
-    if dtype in ("lip_sync", "vocal_audio") and beat.get("sync_mode") == "native":
-        beat["sync_mode"], beat["seed_locked"] = "voiceover", True
-        log("    -> CONVERTING to VOICEOVER B-roll (eliminates lip-sync / robotic-TTS risk)")
-    elif dtype == "hyperrealism":
+    if dtype in ("lip_sync", "vocal_audio"):
+        if beat.get("sync_mode") == "native":
+            beat["sync_mode"], beat["seed_locked"] = "voiceover", True
+            log("    -> CONVERTING to VOICEOVER B-roll (eliminates lip-sync / robotic-TTS risk)")
+        else:
+            beat["_seed_jitter"] = beat.get("_seed_jitter", 0) + 1
+            log("    -> seed jitter to shake off voiceover sync hallucination")
+    elif dtype in ("hyperrealism", "color"):
         beat["_realism_boost"] = True
-        log("    -> realism boost (relax stiffness, soften eyes)")
+        beat["_color_flatten"] = True
+        log("    -> realism & color flatness boost (flatten color profile, soften facial expression)")
     elif dtype in ("identity_drift", "artifact"):
         beat["_seed_jitter"] = beat.get("_seed_jitter", 0) + 1
         log("    -> seed jitter for fresh structure while keeping the anchor")
     return remedy
 
 
-async def refine(beat_id: str, max_iters: int, mode: str) -> None:
+async def refine(beat_id: str, max_iters: int, mode: str, session_id: str | None = None) -> None:
     profile = resolve_profile()
-    sess = ss.make_session(mode, f"refine {beat_id}")
+    sess = ss.make_session(mode, f"refine {beat_id}", session_id=session_id)
     state = sess.state
     state["character"] = {"character_id": profile.character_id}
     state["beat_prompts"] = ca._mock_shot_prompt(state)
@@ -129,8 +134,10 @@ def main():
     ap.add_argument("--beat", default="intro", help="hook|intro|action|proof|cta")
     ap.add_argument("--iters", type=int, default=3)
     ap.add_argument("--mode", default="LIVE_MEDIA", choices=["DRY_RUN", "LIVE_MEDIA"])
+    ap.add_argument("--session", type=str, default=None,
+                    help="Optional static session ID/folder name (reuses a single folder)")
     args = ap.parse_args()
-    asyncio.run(refine(args.beat, args.iters, args.mode))
+    asyncio.run(refine(args.beat, args.iters, args.mode, args.session))
 
 
 if __name__ == "__main__":
