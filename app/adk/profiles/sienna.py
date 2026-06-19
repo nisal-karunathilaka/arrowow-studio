@@ -60,15 +60,18 @@ SIENNA = CharacterProfile(
         tts_voice_id="en-AU-Neural2-A",
     ),
     wardrobe=WardrobeSystem(
-        style="matching seamless activewear sets (Gymshark/Lululemon aesthetic); or an "
-              "oversized vintage graphic tee (pump cover) over biker shorts; white chunky "
-              "running shoes with high white socks",
-        allowed_items=["seamless activewear set", "activewear top", "training tee",
-                       "oversized graphic tee", "biker shorts", "joggers", "zip jacket",
+        style="a SOLID COLOR fitted training tee or tank (with real coverage) over full-length "
+              "leggings or joggers; OR a long-sleeve training top; optionally a zip jacket. White "
+              "chunky running shoes with high white socks. ALWAYS solid color — no prints, graphics, "
+              "text or patterns — and ALWAYS a covered top (never a bare sports bra, no exposed midriff)",
+        allowed_items=["plain training tee", "training tank", "long-sleeve training top",
+                       "leggings", "joggers", "zip jacket",
                        "white chunky running shoes", "high white socks", "cap"],
         color_palette=["sage green", "baby blue", "classic black", "warm beige", "soft white"],
         forbidden_items=["sports bra", "bra", "tight", "midriff", "cleavage",
-                         "form-fitting", "sheer", "see-through"],
+                         "form-fitting", "sheer", "see-through", "graphic tee",
+                         "printed tee", "text shirt", "logo tee", "slogan",
+                         "pattern", "graphic", "print"],
     ),
     mannerisms=Mannerisms(
         signature_gestures=["adjusts ponytail or clips hair right before speaking",
@@ -92,8 +95,9 @@ SIENNA = CharacterProfile(
                       "opacity", "show-through", "transparency", "sports bra", "bra", "tight",
                       "midriff", "cleavage", "form-fitting", "chest up", "chest"],
     anchor_image_uri="app/persona_vault/sienna_fitness_01/anchor_front.png",
-    # CRITICAL persona rule: prefer voiceover B-roll over direct-to-camera lip-sync.
-    prefers_voiceover=True,
+    # Delivery: the talent SPEAKS to camera natively (Veo generates her voice + lip-sync) and
+    # explains the product herself — no separate TTS voiceover overlay.
+    prefers_voiceover=False,
     catchphrases=["Alright team,", "Quick reality check:", "Let's get after it today,"],
     settings=["brightly lit modern gym with mirrors and free weights",
               "sunny outdoor running track or beach promenade",

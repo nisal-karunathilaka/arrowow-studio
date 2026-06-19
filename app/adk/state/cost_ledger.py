@@ -172,7 +172,7 @@ class DevSpendTracker:
     """Persists cumulative live spend across all runs to output/_dev_spend_ledger.json
     and guards the hard $100 development budget."""
 
-    CEILING_USD = 100.0
+    CEILING_USD = 200.0   # raised from $100 (+$100 authorized 2026-06-19 for live scenario validation)
     PATH = os.path.join("output", "_dev_spend_ledger.json")
 
     def _load(self) -> dict:

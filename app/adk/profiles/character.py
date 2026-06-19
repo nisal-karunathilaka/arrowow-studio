@@ -151,6 +151,33 @@ class CharacterProfile(pydantic.BaseModel):
             f"Body: {b.build} build, {b.height}, {b.proportions}, {b.posture}."
         )
 
+    # ---- identity lock (IMMUTABLE) vs styling (ADAPTIVE) ------------------
+    # The lock carries only what must NEVER change across campaigns — the face, the
+    # core human features, hair COLOUR/length/texture, and build. Wardrobe, hair
+    # STYLING and makeup are deliberately excluded so the art director can adapt them
+    # to each campaign's context without breaking character consistency.
+    def identity_lock(self) -> str:
+        """Full immutable identity (face + core features + hair colour/texture + body).
+        Excludes hairstyle/wardrobe/makeup so those can adapt per context."""
+        f, h, b = self.face, self.hair, self.body
+        return (
+            f"{self.display_name}: a {self.age}-year-old {self.nationality} {self.gender}, "
+            f"{self.ethnicity}. FIXED FACE (must match exactly in every shot): {f.face_shape}, "
+            f"{f.skin_tone} skin with {f.skin_texture}, {f.distinguishing_marks}; {f.eyes}; "
+            f"{f.eyebrows}; {f.nose}; {f.lips}; {f.jawline}. "
+            f"FIXED HAIR colour/texture: {h.color}, {h.length}, {h.texture} (styling may change). "
+            f"FIXED BODY: {b.build} build, {b.height}, {b.proportions}."
+        )
+
+    def identity_lock_concise(self) -> str:
+        """Short immutable identity for use WHEN an anchor image carries the face."""
+        f, h = self.face, self.hair
+        return (
+            f"{self.display_name} — {self.age}yo {self.nationality} {self.gender}, "
+            f"{f.skin_tone} skin, {f.distinguishing_marks}, {f.eyes}, {h.color} {h.length} hair. "
+            f"Match the reference image FACE exactly; only styling/wardrobe may differ."
+        )
+
     def voice_direction(self) -> str:
         """Acoustic direction for TTS / audio (and the audio block of video prompts)."""
         v = self.voice

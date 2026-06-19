@@ -26,6 +26,7 @@ from .tools import media_tools, compositor
 from .state import cost_ledger
 from .state.cost_ledger import CostLedger, DevSpendTracker
 from .profiles.registry import resolve_profile
+from .state import session as ss
 
 # Projected cost of a full live render (5 beats x 8s x $0.15 + 1 frame) — used by the guard.
 PROJECTED_FULL_RENDER_USD = 5 * 8 * 0.15 + 0.04
@@ -94,10 +95,11 @@ class ArrowowDirector(BaseAgent):
         if ctx.state["metadata"].get("status") not in ("halted_budget",):
             ctx.state["metadata"]["status"] = "complete"
 
-        # Persist cost logs + record live spend against the $100 ceiling.
+        # Persist cost logs + full session state + record live spend against the $100 ceiling.
         session_dir = "output/" + ctx.state["metadata"]["session_id"]
         ledger = CostLedger(ctx.state)
         ledger.write_logs(session_dir)
+        ss.persist_state(ctx.state)
         spent = ledger.total_usd
         if spent > 0:
             DevSpendTracker().record_run(ctx.state["metadata"]["session_id"], spent, ctx.mode)

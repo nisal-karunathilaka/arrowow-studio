@@ -27,9 +27,29 @@ QA_MODEL = "gemini-3.1-pro-preview"   # multimodal video understanding (system d
 def _mock_qa(state: dict) -> dict:
     return {
         "approved": True, "overall_score": 8, "realism_score": 8, "lip_sync_score": 8,
-        "audio_score": 8, "continuity_score": 8, "defects": [],
-        "summary": "Mock QA pass: natural look, sync acceptable, identity consistent.",
+        "audio_score": 8, "continuity_score": 8, "brief_adherence_score": 8,
+        "product_visibility_score": 8, "defects": [],
+        "summary": "Mock QA pass: brief realized, product featured, face/voice consistent.",
     }
+
+
+def _brief_context(state: dict) -> str:
+    """Compact text view of the brief + planned beats so the QA reviewer can grade brief
+    adherence and product visibility against what was actually requested."""
+    brief = state.get("brief", {})
+    strat = state.get("strategy", {})
+    beats = state.get("beat_prompts", {}).get("beats", [])
+    beat_lines = "\n".join(
+        f"  - {b.get('beat_id')}: {b.get('prompt','')[:160]} "
+        f"| product: {b.get('product_action','')} | text: {b.get('on_screen_text','')}"
+        for b in beats)
+    return (
+        f"CAMPAIGN BRIEF: {brief.get('scenario','')}\n"
+        f"HERO PRODUCT: {strat.get('product','(infer from brief)')}\n"
+        f"SELLING POINTS: {strat.get('key_selling_points', [])}\n"
+        f"PLANNED BEATS:\n{beat_lines}\n"
+        "Grade the video against this: are these beats and this product actually realized on screen?"
+    )
 
 
 async def review_clip(uri: str, state: dict, segment_label: str = "global") -> dict:
@@ -57,7 +77,8 @@ async def review_clip(uri: str, state: dict, segment_label: str = "global") -> d
         response_schema=schemas.QAReport, temperature=0.2)
 
     resp = await client.aio.models.generate_content(
-        model=QA_MODEL, contents=[part, f"Review this UGC clip (segment: {segment_label})."],
+        model=QA_MODEL,
+        contents=[part, f"Review this UGC clip (segment: {segment_label}).\n\n{_brief_context(state)}"],
         config=config)
 
     usage = getattr(resp, "usage_metadata", None)

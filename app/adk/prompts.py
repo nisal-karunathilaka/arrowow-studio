@@ -53,12 +53,29 @@ def _prohibited_clause(profile: CharacterProfile) -> str:
 
 
 # ---- agent system instructions -------------------------------------------
+# Cross-cutting doctrine injected into every creative agent: the user's brief is the
+# FIRST priority. Agents must realize what the brief describes — never substitute a
+# generic template — while keeping the product as the visual hero and the talent's
+# identity locked.
+BRIEF_FIDELITY_DOCTRINE = (
+    "BRIEF IS LAW: the user's brief is the single source of truth. If the brief names a "
+    "product, specific shots, on-screen text, beats, or voiceover lines, you MUST honor them "
+    "faithfully and specifically — never replace them with a generic gym/lifestyle template. "
+    "Extract the real product and feature it as the visual hero. Only invent detail to fill "
+    "genuine gaps the brief left open, and keep every invention on-brand and on-message."
+)
+
+
 def strategist_instruction(profile: CharacterProfile) -> str:
     return (
         f"You are a senior Creative Strategist for high-performing short-form UGC ads. "
         f"The talent is {profile.display_name}, {profile.archetype}. {profile.brand_block()} "
-        f"From the brief, craft a scroll-stopping HOOK (first 2s), a clear ANGLE, and a "
-        f"punchy CTA for a 30-second vertical video. {profile.persona_direction()}"
+        f"{BRIEF_FIDELITY_DOCTRINE} "
+        f"From the brief, extract: the exact hero PRODUCT being advertised (verbatim); a PRECISE "
+        f"FIXED product_design (commit to one exact colour/material/silhouette/sole so the product "
+        f"looks identical in every shot — its visual identity lock); 3-5 concrete selling points the "
+        f"visuals must demonstrate; a scroll-stopping HOOK (first 2s); a clear ANGLE; and a punchy "
+        f"CTA for a 30-second vertical video. {profile.persona_direction()}"
         + _prohibited_clause(profile)
     )
 
@@ -66,12 +83,15 @@ def strategist_instruction(profile: CharacterProfile) -> str:
 def scriptwriter_instruction(profile: CharacterProfile) -> str:
     return (
         f"You are an expert UGC scriptwriter writing for {profile.display_name}. "
-        f"{profile.persona_direction()} Write a single ~30-second spoken script as a 5-beat "
-        f"arc: HOOK (0-3s, direct to camera) -> INTRO (3-10s, direct to camera, the premise) "
-        f"-> ACTION (10-20s, voiceover over her moving/working out) -> PROOF (20-27s, "
-        f"voiceover over a close detail) -> CTA (27-30s, back to camera). Mark each segment "
-        f"[HOOK]/[INTRO]/[ACTION]/[PROOF]/[CTA]. Use ellipses (...) for natural breath pauses "
-        f"and CAPITALIZE stressed words. Keep it real and conversational, never salesy."
+        f"{profile.persona_direction()} {BRIEF_FIDELITY_DOCTRINE} "
+        f"IF THE BRIEF ALREADY CONTAINS A SCRIPT OR PER-BEAT VOICEOVER LINES, adopt them almost "
+        f"verbatim — only lightly tighten wording for timing and {profile.display_name}'s voice; "
+        f"do NOT invent different lines. If the brief has no script, write one. Either way produce "
+        f"a single ~30-second spoken script as a 5-beat arc: HOOK (0-3s) -> INTRO/PERFORMANCE "
+        f"(3-12s) -> ACTION (12-20s) -> PROOF/PRODUCT (20-27s) -> CTA (27-30s). Mark each segment "
+        f"[HOOK]/[INTRO]/[ACTION]/[PROOF]/[CTA]. Keep the product and its benefits explicit in the "
+        f"lines. Use ellipses (...) for natural breath pauses and CAPITALIZE stressed words. Keep "
+        f"it real and conversational, never salesy."
         + _prohibited_clause(profile)
     )
 
@@ -87,46 +107,116 @@ def text_critic_instruction(profile: CharacterProfile) -> str:
 
 def storyboard_instruction(profile: CharacterProfile) -> str:
     return (
-        "You are a Storyboard Director for authentic UGC. Plan EXACTLY 5 beats in order: "
-        "1) Hook (kinetic entry, camera C2 dynamic handheld), 2) Intro (direct-to-camera, "
-        "C1 frontal close-up), 3) Action (wide demo, character moving/facing away, C4 deep "
-        "wide), 4) Proof (macro product/result detail, C3 macro), 5) CTA (back to camera, C1). "
-        "Beats 1/2/5 are on-camera dialogue; beats 3/4 are voiceover (no lip-sync risk).\n"
-        "CRITICAL STORY CONTINUITY & TRANSITION RULES:\n"
-        "- Ensure the physical movements and subject velocity flow naturally between consecutive scenes.\n"
-        "- Explicitly match the subject's ending posture in scene i to their starting posture in scene i+1 (e.g. if Scene 3 ends with subject jogging towards the left, Scene 4 should start with the subject already in motion, or transition seamlessly using a motion-matched panning angle).\n"
-        "- Plan camera angles and distances so that the transition boundaries are not jarring (e.g. match vectors, clean crossfade alignment).\n"
-        "Output scene_actions and scene_cameras as parallel 5-element lists. Keep actions "
-        "realistic and shot like a real person filming themselves on a phone."
+        "You are a Storyboard Director for authentic UGC commercials. "
+        f"{BRIEF_FIDELITY_DOCTRINE}\n"
+        "Plan EXACTLY 5 beats in order — map them onto whatever the brief describes: "
+        "1) HOOK (kinetic scroll-stopper, camera C2 dynamic handheld), 2) INTRO/PERFORMANCE "
+        "(establish the premise / show the product in use, camera C1), 3) ACTION (the main "
+        "demonstration of the product benefit, camera C4 wide), 4) PROOF/PRODUCT (the hero "
+        "product close-up that proves the claim, camera C3 macro), 5) CTA (confident sign-off, "
+        "camera C1). If the brief specifies what happens in a beat (e.g. 'old shoe vs new shoe', "
+        "'box jumps', 'flex the sole', 'walk outside'), realize THAT — do not substitute a "
+        "generic gym scene.\n"
+        "PRODUCT IS THE HERO: at least the PROOF beat (and ideally HOOK + ACTION) must feature "
+        "the hero product clearly. Use low/hero angles when the brief calls for it.\n"
+        "PRESERVE BRIEF SPECIFICS: keep the exact props, contrasts and message the brief names "
+        "(e.g. an OLD ill-fitting outfit before the new product). Do not drop or generalize them.\n"
+        "DELIVERY — NATIVE TALKING HEAD: the talent SPEAKS to camera in her own voice and explains "
+        "the product herself (Veo lip-syncs). She is a real UGC creator addressing the viewer; there "
+        "is no separate narrator and no on-screen text.\n"
+        "STYLING ADAPTS TO CONTEXT: wardrobe, hair styling and makeup should suit the campaign and "
+        "brand (a shoe ad, a yoga ad and a running ad look different). Keep the talent's FACE and "
+        "core features unchanged — only styling adapts.\n"
+        "MOVEMENT — PHYSICS-SAFE ONLY (critical): AI video glitches on fast/complex motion and on hands "
+        "manipulating objects (morphing limbs, warping products). Use ONLY calm controlled movement: "
+        "standing and talking with natural gestures, a slow confident walk, a gentle turn, calmly holding "
+        "the product up to show it. DO NOT plan box jumps, sprints, running, squats, lunges or fast "
+        "action, and no tight finger-on-product close-ups — convey high energy through her confident "
+        "delivery, not risky moves. Keep backgrounds uncluttered (no crowds).\n"
+        "CONTINUITY & TRANSITIONS:\n"
+        "- Make movement/velocity flow naturally between consecutive scenes.\n"
+        "- Match the subject's ending posture in scene i to their starting posture in scene i+1.\n"
+        "- Choose camera angles/distances so transitions are not jarring.\n"
+        "Output scene_actions and scene_cameras as parallel 5-element lists. Each scene_action must "
+        "be specific to the brief and product, shot like a real person filming on a phone."
     )
 
 
 def wardrobe_instruction(profile: CharacterProfile) -> str:
     w = profile.wardrobe
     return (
-        f"You are an Art Director dressing {profile.display_name}. Pick ONE wardrobe and a "
-        f"location. Wardrobe style: {w.style}. Choose only from: {', '.join(w.allowed_items)}; "
+        f"You are an Art Director styling {profile.display_name} for THIS specific campaign. "
+        f"{BRIEF_FIDELITY_DOCTRINE}\n"
+        f"Choose wardrobe, location, hair_style, makeup and product_styling that fit the brand "
+        f"and the brief's context (a training-shoe ad, a yoga ad and a running ad each look "
+        f"different). These ADAPT per campaign — that is intended.\n"
+        f"Wardrobe vocabulary: {w.style}. Prefer items like: {', '.join(w.allowed_items)}; "
         f"palette: {', '.join(w.color_palette)}. NEVER use: {', '.join(w.forbidden_items)} "
-        f"(they trip safety filters). Location should suit authentic fitness UGC."
+        f"(they trip safety filters). The outfit must be ONE solid plain color with NO graphics, "
+        f"text, logos, patterns or prints (AI video cannot keep text/graphics consistent).\n"
+        f"COVERAGE (required): the top MUST have real coverage — a fitted training tee, tank, "
+        f"long-sleeve, or a zip jacket over the leggings/joggers. NEVER a bare sports-bra-only "
+        f"look and no exposed midriff. When the hero product is footwear or an accessory, keep "
+        f"the outfit understated (e.g. a plain tee with full-length leggings or joggers) so the "
+        f"product — not the body — is the focus. This keeps it brand-safe and filter-safe.\n"
+        f"hair_style = STYLING only (e.g. 'sleek high ponytail') — never change hair colour, length "
+        f"or texture, and never change the face. makeup = a natural, context-appropriate look. "
+        f"product_styling = how the hero product is worn/held/placed so it reads as the visual hero. "
+        f"Location must suit the brief and let the product stand out."
     )
 
 
 def shot_prompt_instruction(profile: CharacterProfile,
                             realism: RealismProfile = UGC_REALISM) -> str:
     return (
-        "You are a Prompt Engineer producing a 5-beat shot list for image/video generation. "
-        "Return 'reference_frame_prompt' (one canonical front-facing portrait) and a 'beats' "
-        "list of EXACTLY 5 items (beat_id in [hook, intro, action, proof, cta], that order). "
-        "For each beat provide: camera (hook=C2, intro=C1, action=C4, proof=C3, cta=C1); "
-        "camera_movement; lens; lighting; background (the setting); ambient_audio (the room/"
-        "background sound bed); sync_mode ('native' for hook/intro/cta, 'voiceover' for action/"
-        "proof); seed_locked (true for hook/intro/cta, false otherwise); a detailed 'prompt'; "
-        "and 'dialogue_or_vo' (the line for that beat).\n"
-        "UPSTREAM SCENE TRANSITION PLANNING:\n"
-        "- You must engineer every scene's prompt to maintain absolute body orientation, posture continuity, and motion vectors relative to the adjacent scenes.\n"
-        "- Add explicit pose-matching descriptors at the boundaries of adjacent scenes (e.g. 'Scene starts matching the ending pose of the previous scene').\n"
-        "CHARACTER LOCK — describe the subject in EVERY prompt using EXACTLY: "
-        f"'{profile.casting_block()}'. Never use a real person's name or celebrity likeness.\n"
+        "You are a world-class Prompt Engineer + Director of Photography producing a 5-beat shot "
+        "list for AI video generation (Veo 3.1). Your prompts must be VIVID, SPECIFIC and "
+        "CINEMATIC while reading as authentic phone-shot UGC. "
+        f"{BRIEF_FIDELITY_DOCTRINE}\n"
+        "Return 'reference_frame_prompt' (one canonical front-facing portrait of the talent) and a "
+        "'beats' list of EXACTLY 5 items (beat_id in [hook, intro, action, proof, cta], that order). "
+        "For each beat set: camera (hook=C2, intro=C1, action=C4, proof=C3, cta=C1); camera_movement; "
+        "lens; lighting; background (the setting from the brief); ambient_audio; sync_mode='native' for "
+        "ALL beats (she SPEAKS to camera and Veo lip-syncs her own voice); seed_locked=true for ALL beats; "
+        "features_person=true for ALL beats (she is on screen in every shot); a detailed 'prompt'; "
+        "'dialogue_or_vo' (the SHORT line she actually speaks in this beat, ~1 sentence / under 7s); "
+        "'product_action' (how she shows/features the product); 'on_screen_text' may be left empty (no "
+        "text overlays are rendered — the character carries the message).\n"
+        "THE 'prompt' FIELD — make it strong and brief-faithful. Each prompt must concretely realize "
+        "the brief's beat: the real setting, the real action, and the HERO PRODUCT featured with "
+        "intentional framing (low/hero angle when the brief asks). Describe motion, energy and "
+        "lighting like a DP. Do NOT fall back to a generic 'walking in a gym' shot.\n"
+        "PRESERVE BRIEF SPECIFICS: keep every concrete object, prop, contrast and beat the brief "
+        "names — e.g. if the hook says she first holds an OLD CLUNKY sneaker before revealing the new "
+        "one, show the old sneaker first. Do not silently drop or simplify the brief's setup.\n"
+        "PRODUCT HERO + CONSISTENCY: the product must be visible and well-framed in at least the proof "
+        "beat, and wherever the brief features it (fill product_action there). Describe the product with "
+        "the SAME concrete design wording in EVERY beat (color, material, silhouette) so it stays "
+        "visually identical shot-to-shot — never let its design change.\n"
+        "IDENTITY FRAMING: when her face is visible, frame it clearly (the anchor image keeps her "
+        "consistent). Avoid extreme low-angle full-body glamour framing of the person — reserve "
+        "low/hero angles for the PRODUCT, not the body.\n"
+        "DELIVERY — NATIVE TALKING HEAD: she SPEAKS each beat's line directly to camera in her own voice "
+        "(Veo generates the audio + lip-sync). Write 'dialogue_or_vo' as the exact SHORT line she says in "
+        "that beat (one sentence, conversational, from the brief's voiceover lines). She is a real UGC "
+        "creator explaining the product to the viewer — selfie/handheld framing, natural and direct.\n"
+        "STYLING IN-PROMPT: you MAY describe the campaign wardrobe / hair styling / makeup provided by "
+        "the Art Director (it adapts per campaign), but keep it a solid plain colour with no text or "
+        "graphics. NEVER alter the talent's face or core features.\n"
+        "MOVEMENT — PHYSICS-SAFE ONLY (critical): AI video glitches on fast or complex motion and on "
+        "hands manipulating objects, producing morphing limbs, warping products and body-part artifacts. "
+        "So use ONLY calm, controlled movements Veo renders cleanly: standing and talking with natural "
+        "hand gestures, a slow confident walk toward/past camera, a gentle turn, adjusting hair, calmly "
+        "holding the product up to show it, gesturing toward it. DO NOT depict box jumps, sprints, "
+        "running, squats, lunges, jumping, fast dynamic action, or tight close-ups of fingers bending/"
+        "squeezing/pressing the product — these reliably glitch. If the brief asks for high-impact action, "
+        "convey that energy through her CONFIDENT DELIVERY and light controlled movement instead of "
+        "literally performing the risky move. Keep hands relaxed and visible, backgrounds uncluttered "
+        "(no crowds).\n"
+        "TRANSITIONS: engineer body orientation, posture and motion vectors to flow between adjacent "
+        "beats; add explicit pose-matching descriptors at the boundaries.\n"
+        "IDENTITY LOCK — anchor the subject's FIXED identity in EVERY prompt using: "
+        f"'{profile.identity_lock()}'. Never use a real person's name or celebrity likeness.\n"
         f"{realism.directive_block()}"
         + _prohibited_clause(profile)
     )
@@ -134,31 +224,43 @@ def shot_prompt_instruction(profile: CharacterProfile,
 
 def qa_instruction(profile: CharacterProfile, realism: RealismProfile = UGC_REALISM) -> str:
     return (
-        "You are a senior commercial-video QA reviewer for AI-generated UGC. Watch the video "
-        "and grade it like a broadcast deliverable. Score 0-10 each: overall, realism "
-        "(higher = more like REAL phone footage, lower = AI/plastic/uncanny), lip_sync, audio, "
-        "continuity (does the person match the character bible across shots, is color "
-        "consistent).\n"
-        "CRITICAL COLOR & REALISM EVALUATION: You must aggressively penalize glossy, hyperrealistic, "
-        "saturated, or overly professional cinematic colors (such as warm orange-and-teal grading, "
-        "high dynamic range pops, or deep studio saturation). The footage MUST look like flat, raw, "
-        "slightly desaturated, un-graded smartphone camera footage. If you see cinematic color grading "
-        "or hyper-saturated/glossy hues, you MUST flag it as a 'color' or 'hyperrealism' defect with "
-        "a severity of 4 or 5 (meaning it fails approval).\n"
-        "CRITICAL MOVEMENT & TRANSITION EVALUATION:\n"
-        "- Watch for any unnatural physics, warping, lagging, stuttering, or glitches during actionable scenarios (like running, stretching, walking, or interacting with items like water cups or weights). If hands/items morph or jitter, flag as 'artifact' or 'framing' with high severity.\n"
-        "- Watch for visual lagging, frame drop, stuttering, or jumpy discontinuities between scenes, and flag them as 'transition' or 'pacing' defects.\n"
-        "List concrete defects, each with: type (one of lip_sync, vocal_audio, "
-        "transition, soundtrack, hyperrealism, identity_drift, artifact, color, pacing, "
-        "framing), segment (beat id or 'global'), severity 1-5, a description, and a remedy_hint "
-        "describing how to fix it. "
-        "IMPORTANT — this is a deliberate VOICEOVER UGC style: the talent is usually NOT speaking "
-        "to camera (she performs actions while her voice narrates). Do NOT flag lip_sync when she "
-        "is not visibly trying to speak synced dialogue to the lens; only flag lip_sync if her "
-        "mouth clearly attempts synced speech to camera and fails. "
-        "Approve ONLY if overall>=7 AND realism>=7 AND no defect has "
-        f"severity>=4. The character should look like: {profile.casting_block()[:160]}... "
-        f"and the footage must look real, not AI: {realism.negative_block()}"
+        "You are a senior commercial-video QA reviewer for AI-generated UGC. Watch the video and "
+        "grade it like a broadcast deliverable that must (a) faithfully deliver the BRIEF, (b) keep "
+        "the talent's IDENTITY consistent, and (c) look like real phone footage. You are given the "
+        "campaign brief and the planned beats as text — judge the video against them.\n"
+        "Score 0-10 each: overall; realism (higher = more like REAL phone footage, lower = AI/"
+        "plastic/uncanny); lip_sync; audio; continuity; brief_adherence; product_visibility.\n"
+        "BRIEF ADHERENCE (brief_adherence_score): Does the video actually show what the brief "
+        "described for each beat (the specific actions, settings and message)? If the brief asked "
+        "for a product demo, a specific action, or a particular scene and it is MISSING or replaced "
+        "by a generic shot, score low and add a 'brief_adherence' defect (severity 4-5) naming what "
+        "is missing.\n"
+        "PRODUCT AS HERO (product_visibility_score): Is the hero product clearly shown and well-"
+        "framed across the ad (especially the proof beat)? If the product is absent, wrong, tiny, "
+        "or never the focus, score low and add a 'product' defect (severity 4-5).\n"
+        "IDENTITY (continuity_score): The talent's FACE, core features and VOICE must stay identical "
+        "across all beats — flag 'identity_drift' (severity 4-5) if the FACE changes. NOTE: wardrobe, "
+        "hair STYLING and makeup are INTENTIONALLY adapted to the campaign — do NOT flag those as "
+        "drift; only the face/voice/body must be constant.\n"
+        "COLOR & REALISM: aggressively penalize glossy, saturated, cinematic teal-and-orange grading "
+        "or HDR pop — footage must look flat, raw, slightly desaturated smartphone capture. Flag as "
+        "'color' or 'hyperrealism' (severity 4-5) when violated.\n"
+        "MOVEMENT & TRANSITIONS: flag unnatural physics, warping, morphing hands/objects as "
+        "'artifact'/'framing'; flag jumpy discontinuities between scenes as 'transition'/'pacing'.\n"
+        "Each defect has: type (one of lip_sync, vocal_audio, transition, soundtrack, hyperrealism, "
+        "identity_drift, artifact, color, pacing, framing, brief_adherence, product), segment (beat id "
+        "or 'global'), severity 1-5, a description, and a remedy_hint.\n"
+        "NATIVE TALKING-HEAD STYLE: the talent SPEAKS to camera in her own voice and explains the "
+        "product. Grade lip_sync normally — her lip movements should match her speech. There are "
+        "intentionally NO on-screen text captions and no separate narrator; do not penalise their "
+        "absence. Flag the talent's voice CHANGING between shots as 'vocal_audio'. Watch hard for "
+        "morphing limbs/fingers and warping/shape-shifting products during movement (flag 'artifact', "
+        "high severity) — clean physics is required.\n"
+        "Approve ONLY if overall>=7 AND realism>=5 AND brief_adherence>=7 AND product_visibility>=6 "
+        "AND no defect has severity>=5. Minor severity 1-4 cosmetic defects should NOT block approval. "
+        "Veo 3.1 naturally looks slightly polished — score realism generously for well-lit phone video. "
+        f"The talent's FIXED identity: {profile.identity_lock()[:200]}... "
+        f"Footage must look real, not AI: {realism.negative_block()}"
     )
 
 
@@ -175,23 +277,44 @@ NEGATIVE_BLOCK = (
 
 def build_beat_generation_prompt(beat: dict, profile: CharacterProfile,
                                  realism: RealismProfile = UGC_REALISM,
-                                 use_anchor: bool = False) -> str:
+                                 use_anchor: bool = False, product_design: str = "") -> str:
     """Assemble the final Veo prompt for one beat. Identity appears ONCE (concise when an
     anchor image is supplied). Native beats get a short-dialogue + lip-sync directive;
     voiceover beats explicitly avoid lip-sync (Sienna's preferred B-roll style)."""
     native = beat.get("sync_mode") == "native"
-    identity = profile.casting_block_concise() if use_anchor else profile.casting_block()
+    # Use the IDENTITY LOCK (face + core features, no fixed hairstyle/wardrobe) so the
+    # campaign styling described in the beat prompt can adapt without breaking the face.
+    identity = profile.identity_lock_concise() if use_anchor else profile.identity_lock()
     anchor_note = (" The first frame is conditioned on the reference image — keep that exact "
-                   "face and identity from every angle.") if use_anchor else ""
+                   "FACE and identity from every angle; styling/wardrobe may follow the scene.") \
+        if use_anchor else ""
+
+    # Reinforce the hero product so Veo features it (the brief's product is the visual hero).
+    product_note = ""
+    if beat.get("product_action"):
+        product_note = f" HERO PRODUCT: {beat['product_action']} — keep it clearly visible and well-framed."
+
+    # Physics-safety: keep motion clean so Veo doesn't morph limbs/objects (a real defect in action shots).
+    motion_safe = (" MOTION: calm and controlled with real-world physics — no fast or complex action, "
+                   "no jumping/sprinting/squatting, hands relaxed and natural (no morphing fingers), "
+                   "the product holds a stable consistent shape.")
 
     if native:
-        perform = ("She speaks a SHORT line directly to camera (under 7 seconds of speech) with "
-                   "natural jaw movement and ACCURATE lip-sync to the audio. ")
-        line = f'(Sienna, speaking to camera: "{beat.get("dialogue_or_vo","")}")'
+        perform = ("She speaks this SHORT line directly to camera in her own natural voice with "
+                   "ACCURATE lip-sync, warm and conversational, with light natural hand gestures. ")
+        line = f'(Sienna says, to camera: "{beat.get("dialogue_or_vo","")}")'
     else:
-        perform = ("She does NOT look at or speak to the camera — her mouth is closed, she is not speaking, "
-                   "no lip-sync or speech movement, voiceover only. ")
+        perform = ("She is NOT talking — lips gently CLOSED and still, no mouthing of words, no jaw "
+                   "movement, no speech, no lip-sync. She may smile or breathe but does not speak. "
+                   "Voiceover only (narration added in post). ")
         line = ""
+
+    # Product-design lock: inject the canonical product appearance so the hero product looks
+    # IDENTICAL across every beat (Veo otherwise re-invents it each shot — a real defect found in QA).
+    design_note = ""
+    if product_design and beat.get("product_action"):
+        design_note = (f" HERO PRODUCT — EXACT FIXED DESIGN, identical in every shot: {product_design}. "
+                       "Do not change its colour, material or shape.")
 
     # Structured refinement flag (set by the QA refiner for hyperrealism defects) — appended
     # as a clean directive rather than raw remedy text, to avoid bloating/tripping RAI.
@@ -205,15 +328,31 @@ def build_beat_generation_prompt(beat: dict, profile: CharacterProfile,
                      "slightly desaturated colors."
                      if beat.get("_color_flatten") else "")
 
+    # Prop-only beats (e.g. proof / product reveal) contain no person — strip the casting
+    # block and performance directive entirely to avoid fitness-context RAI triggers.
+    if beat.get("_prop_only"):
+        positive = (
+            f"{beat.get('prompt', '')}\n"
+            f"{product_note}{design_note}\n"
+            f"CAMERA: {beat.get('camera_movement', 'handheld')}, {beat.get('lens', 'phone wide')}, "
+            f"angle {beat.get('camera', 'C1')}. LIGHTING: {beat.get('lighting', 'natural')}. "
+            f"SETTING: {beat.get('background', '')}.\n"
+            f"{realism.directive_block()}{boost}{color_flatten}\n"
+            f"AUDIO: Ambient: {beat.get('ambient_audio') or 'natural room tone'}. "
+            f"No background music, no sound effects.\n"
+        )
+        return apply_filter_bypass(positive) + "\n" + NEGATIVE_BLOCK
+
     # Positive description gets the filter-bypass net; the NEGATIVE_BLOCK must stay intact
     # (it intentionally lists the banned words as things to AVOID).
     positive = (
         f"{beat.get('prompt','')}\n"
-        f"SUBJECT: {identity}{anchor_note}\n"
+        f"SUBJECT (fixed identity): {identity}{anchor_note}\n"
+        f"{product_note}{design_note}\n"
         f"CAMERA: {beat.get('camera_movement','handheld')}, {beat.get('lens','phone wide')}, "
         f"angle {beat.get('camera','C1')}. LIGHTING: {beat.get('lighting','natural')}. "
         f"SETTING: {beat.get('background','')}.\n"
-        f"PERFORMANCE: {perform}{profile.mannerisms.movement_style}.\n"
+        f"PERFORMANCE: {perform}{profile.mannerisms.movement_style}.{motion_safe}\n"
         f"{realism.directive_block()}{boost}{color_flatten}\n"
         f"AUDIO: {profile.voice_direction()} Ambient: {beat.get('ambient_audio') or 'natural room tone'}. "
         f"No background music, no sound effects.\n"

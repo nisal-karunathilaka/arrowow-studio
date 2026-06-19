@@ -21,6 +21,7 @@ import uuid
 from ..core import InvocationContext
 from .. import schemas, prompts
 from ..profiles.registry import resolve_profile
+from ..profiles import brands
 from ..profiles.realism import UGC_REALISM
 from ..state.cost_ledger import CostLedger
 
@@ -30,7 +31,16 @@ BEAT_SECONDS = 8
 
 
 def _profile(state: dict):
-    return resolve_profile(state.get("character", {}).get("character_id", "sienna_fitness_01"))
+    cid = state.get("character", {}).get("character_id", "sienna_fitness_01")
+    brand_id = state.get("brief", {}).get("brand_id")
+    brand = brands.get_brand(brand_id) if brand_id else None
+    return resolve_profile(cid, brand=brand)
+
+
+def _aspect_ratio(state: dict) -> str:
+    """The output aspect ratio selected in the UI (Veo-native: 16:9 or 9:16)."""
+    ar = state.get("brief", {}).get("aspect_ratio", "16:9")
+    return ar if ar in ("16:9", "9:16") else "16:9"
 
 
 def _session_dir(ctx: InvocationContext) -> str:
@@ -51,6 +61,10 @@ def generate_reference_frame(ctx: InvocationContext) -> dict:
     profile = _profile(ctx.state)
     prompt = ctx.state.get("beat_prompts", {}).get("reference_frame_prompt") \
         or profile.casting_block()
+    # HITL: if a reviewer rejected the previous anchor frame, fold their notes into the prompt.
+    fb = (ctx.state.get("hitl_feedback") or {}).get("reference_frame")
+    if fb:
+        prompt = f"{prompt} Reviewer adjustments: {fb}."
     prompt = prompts.apply_filter_bypass(prompt)
 
     if _is_live(ctx):
@@ -82,18 +96,28 @@ def make_render_beat_stage(beat_id: str):
             return res
 
         seed = (profile.seed + beat.get("_seed_jitter", 0)) if beat.get("seed_locked") else None
-        # One-Anchor Rule: the single canonical anchor reinforces identity (Veo ASSET
-        # reference). No chaining — we never feed a generated frame back as the anchor.
-        # ARROWOW_NO_ANCHOR lets us A/B the anchor's effect on RAI / consistency.
-        anchor = None if os.environ.get("ARROWOW_NO_ANCHOR") else profile.resolve_anchor()
+        # Identity-anchor rule (revised after live validation): pass the anchor to EVERY beat
+        # in which the talent appears (face or body) so her identity stays consistent across
+        # shots — decoupled from the seed/A-roll policy. Only a pure product-only object shot
+        # (features_person=False) skips the anchor, since a face reference there would prime
+        # Veo to insert a person and trip the RAI fitness filter.
+        base_anchor = None if os.environ.get("ARROWOW_NO_ANCHOR") else profile.resolve_anchor()
+        anchor = base_anchor if (beat.get("features_person", True) and base_anchor) else None
         use_anchor = anchor is not None
+        product_design = ctx.state.get("strategy", {}).get("product_design", "")
         final_prompt = prompts.build_beat_generation_prompt(
-            beat, profile, UGC_REALISM, use_anchor=use_anchor)
+            beat, profile, UGC_REALISM, use_anchor=use_anchor, product_design=product_design)
 
         if _is_live(ctx):
             from app.providers.live_providers import VeoVideoProvider
+            # generate_audio=True: keep Veo's ambient bed (footsteps, room tone) for realism. The
+            # scripted TTS voiceover is muxed in post as the PRIMARY audio with the ambient ducked
+            # under it. Because the talent is never posed "talking to camera" (voiceover action
+            # shots, mouth closed), Veo produces ambient rather than clashing speech.
             r = VeoVideoProvider().generate_video(prompt=final_prompt, reference_image=anchor,
-                                                  output_dir=_session_dir(ctx), seed=seed)
+                                                  output_dir=_session_dir(ctx), seed=seed,
+                                                  generate_audio=True,
+                                                  aspect_ratio=_aspect_ratio(ctx.state))
             result = {"uri": r.get("uri", "error.mp4"), "status": r.get("status", "failed"),
                       "beat_id": beat_id}
             # Charge ONLY for successful renders — RAI-blocked/failed videos are not billed.

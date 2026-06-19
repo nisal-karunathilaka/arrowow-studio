@@ -87,7 +87,7 @@ class GoogleTTSProvider:
             return {"uri": "error.mp3", "status": "failed"}
 
 class VeoVideoProvider:
-    def generate_video(self, prompt: str, reference_image: str = None, output_dir: str = None, seed: int = None) -> dict:
+    def generate_video(self, prompt: str, reference_image: str = None, output_dir: str = None, seed: int = None, generate_audio: bool = True, aspect_ratio: str = "16:9") -> dict:
         print("[VeoVideoProvider] Generating video using Veo 3.1...")
         try:
             from google import genai
@@ -135,9 +135,11 @@ class VeoVideoProvider:
             
             config_params = {
                 "output_gcs_uri": output_gcs_uri,
-                "aspect_ratio": "16:9",
+                "aspect_ratio": aspect_ratio if aspect_ratio in ("16:9", "9:16") else "16:9",
                 "person_generation": "ALLOW_ADULT",
-                "generate_audio": True,
+                # For voiceover beats, disable Veo audio so it doesn't add speech/lip movement.
+                # The TTS voiceover is overlaid in post-production by the compositor.
+                "generate_audio": generate_audio,
                 # Veo 3.1 caps at 8 seconds for BOTH Text-to-Video [4,6,8] and Image-to-Video [8]
                 "duration_seconds": 8,
             }
