@@ -177,8 +177,21 @@ class DevSpendTracker:
 
     def _load(self) -> dict:
         if os.path.exists(self.PATH):
-            with open(self.PATH) as f:
-                return json.load(f)
+            try:
+                with open(self.PATH) as f:
+                    content = f.read().strip()
+                    if content:
+                        return json.loads(content)
+            except (json.JSONDecodeError, ValueError):
+                # Handle transient race condition when file is being written concurrently
+                time.sleep(0.1)
+                try:
+                    with open(self.PATH) as f:
+                        content = f.read().strip()
+                        if content:
+                            return json.loads(content)
+                except Exception:
+                    pass
         return {"ceiling_usd": self.CEILING_USD, "total_spent_usd": 0.0, "runs": []}
 
     def total_spent(self) -> float:
