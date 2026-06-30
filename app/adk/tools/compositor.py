@@ -274,6 +274,43 @@ def _mux_voiceover(video_path: str, vo_path: str, out_path: str) -> bool:
         return False
 
 
+def _mux_final_audio(video_path: str, vo_path: str, soundtrack_path: str, out_path: str) -> bool:
+    """Mix the final audio bed in one pass: scripted TTS voiceover as the PRIMARY layer, a low
+    music bed under it, and the Veo ambient ducked beneath both. Levels are scaled by the number
+    of layers so amix's input-count normalisation lands on the intended mix regardless of which
+    layers are present. Returns True if a mixed file was produced."""
+    has_amb = _clip_has_audio(video_path)
+    has_vo = bool(vo_path and os.path.exists(vo_path))
+    has_st = bool(soundtrack_path and os.path.exists(soundtrack_path))
+    if not has_vo and not has_st:
+        return False  # nothing new to add — keep the graded master as-is
+
+    n = sum([has_amb, has_vo, has_st])
+    inputs, parts, labels, idx = ["-i", video_path], [], [], 1
+    # Target post-mix levels (amix divides by n, so pre-scale by n): VO dominant, music a bed,
+    # ambient a faint texture.
+    if has_amb:
+        parts.append(f"[0:a]volume={0.14 * n:.2f}[amb]"); labels.append("[amb]")
+    if has_vo:
+        inputs += ["-i", vo_path]; parts.append(f"[{idx}:a]volume={1.30 * n:.2f}[vo]")
+        labels.append("[vo]"); idx += 1
+    if has_st:
+        inputs += ["-i", soundtrack_path]; parts.append(f"[{idx}:a]volume={0.18 * n:.2f}[mus]")
+        labels.append("[mus]"); idx += 1
+
+    fc = (";".join(parts) + ";" + "".join(labels) +
+          f"amix=inputs={n}:duration=first:dropout_transition=0[a]")
+    cmd = (["ffmpeg", "-y"] + inputs +
+           ["-filter_complex", fc, "-map", "0:v", "-map", "[a]",
+            "-c:v", "copy", "-c:a", "aac", out_path])
+    try:
+        subprocess.run(cmd, check=True, capture_output=True, timeout=180)
+        return os.path.exists(out_path)
+    except Exception as e:
+        print(f"[compositor] final audio mux failed: {e}")
+        return False
+
+
 def _caption_windows(state: dict) -> list[tuple[str, float, float]]:
     """Map each rendered beat's on_screen_text to its time window in the master."""
     beats_meta = {b.get("beat_id"): b for b in state.get("beat_prompts", {}).get("beats", [])}
@@ -305,10 +342,8 @@ def composite_timeline(ctx: InvocationContext) -> dict:
     transition_plan = [{"into": b, "transition": TRANSITIONS.get(b, "cut")} for b in BEAT_ORDER]
     grade = UGC_REALISM.grade_directives()
 
-    session_dir = os.path.join("output", ctx.state.get("metadata", {}).get("session_id", "unknown"))
-    os.makedirs(session_dir, exist_ok=True)
-    final_uri = os.path.join(session_dir, f"master_{uuid.uuid4().hex[:6]}.mp4")
-
+    session_id = ctx.state.get("metadata", {}).get("session_id", "unknown")
+    
     # Get dynamic video filter parameters from state or set defaults
     vf_params = ctx.state.setdefault("compositor_vf_params", {
         "noise": 7,
@@ -323,26 +358,99 @@ def composite_timeline(ctx: InvocationContext) -> dict:
     filter_vf = f"noise=alls={noise_val}:allf=t,eq=saturation={sat_val:.2f}:contrast={con_val:.2f}:brightness={br_val:.2f}"
 
     status = "mock"
+    captioned = False
+    vo_muxed = False
     soundtrack_path = ctx.state.get("soundtrack_file", {}).get("uri")
-    if ctx.mode == "LIVE_MEDIA":
-        # The talent speaks natively (Veo generates her voice + lip-sync), so the master is simply
-        # the graded concatenation of the native clips — NO separate voiceover audio overlay and NO
-        # on-screen-text/caption overlay (the character and product carry the ad).
-        ok = _ffmpeg_concat_grade([c.get("uri") for c in clips], final_uri, filter_vf, soundtrack_path)
+    vo_uri = ctx.state.get("voiceover", {}).get("uri")
+    
+    if ctx.mode in ("LIVE_MEDIA", "DRY_RUN"):
+        # 1) Set up temporary directory for local processing
+        temp_dir = os.path.join("/tmp", f"session_{session_id}_{uuid.uuid4().hex[:6]}")
+        os.makedirs(temp_dir, exist_ok=True)
+        
+        # 2) Download all inputs (videos, VO, music) from GCS signed URLs locally
+        local_clip_paths = []
+        for i, c in enumerate(clips):
+            uri = c.get("uri")
+            if uri and uri.startswith("http"):
+                local_path = os.path.join(temp_dir, f"clip_{i}.mp4")
+                import urllib.request
+                urllib.request.urlretrieve(uri, local_path)
+                local_clip_paths.append(local_path)
+            else:
+                local_clip_paths.append(uri)
+
+        local_vo_uri = vo_uri
+        if vo_uri and vo_uri.startswith("http"):
+            local_vo_uri = os.path.join(temp_dir, "vo.mp3")
+            import urllib.request
+            urllib.request.urlretrieve(vo_uri, local_vo_uri)
+
+        local_soundtrack_path = soundtrack_path
+        if soundtrack_path and soundtrack_path.startswith("http"):
+            local_soundtrack_path = os.path.join(temp_dir, "soundtrack.mp3")
+            import urllib.request
+            urllib.request.urlretrieve(soundtrack_path, local_soundtrack_path)
+            
+        final_local_path = os.path.join(temp_dir, f"master_{uuid.uuid4().hex[:6]}.mp4")
+
+        # 3) Concat + crossfade + realism grade
+        ok = _ffmpeg_concat_grade(local_clip_paths, final_local_path, filter_vf, soundtrack_path=None)
         status = "success" if ok else "failed"
 
+        if status == "success":
+            # 4) Mix audio overlays (VO + music bed + ducked ambient)
+            if (local_vo_uri and os.path.exists(local_vo_uri)) or (local_soundtrack_path and os.path.exists(local_soundtrack_path)):
+                mix_out = os.path.join(temp_dir, f"master_mix_{uuid.uuid4().hex[:6]}.mp4")
+                if _mux_final_audio(final_local_path, local_vo_uri, local_soundtrack_path, mix_out):
+                    final_local_path = mix_out
+                    vo_muxed = bool(local_vo_uri and os.path.exists(local_vo_uri))
+
+            # 5) Burn captions
+            windows = _caption_windows(ctx.state)
+            if windows:
+                cap_out = os.path.join(temp_dir, f"master_cap_{uuid.uuid4().hex[:6]}.mp4")
+                if _burn_captions(final_local_path, windows, temp_dir, cap_out):
+                    final_local_path = cap_out
+                    captioned = True
+
+        if status == "success" and os.path.exists(final_local_path):
+            # 6) Upload the final master video to GCS
+            from app.providers.live_providers import upload_file_to_gcs
+            blob_name = f"sessions/{session_id}/master/master_{uuid.uuid4().hex[:6]}.mp4"
+            final_uri = upload_file_to_gcs(final_local_path, blob_name)
+        else:
+            final_uri = None
+            status = "failed"
+
+        # 7) Clean up all local temporary files
+        import shutil
+        try:
+            shutil.rmtree(temp_dir)
+        except Exception as e:
+            print(f"[Compositor Cleanup] Error removing temp folder: {e}")
+            
+    else:
+        # Mock mode
+        session_dir = os.path.join("output", session_id)
+        os.makedirs(session_dir, exist_ok=True)
+        final_uri = os.path.join(session_dir, f"master_{uuid.uuid4().hex[:6]}.mp4")
+
     result = {
-        "final_uri": final_uri if status != "failed" else None,
+        "final_uri": final_uri,
         "duration_s": len(clips) * 8,
         "beats_used": [c.get("beat_id") for c in clips],
         "transition_plan": transition_plan,
         "realism_grade": grade,
         "ffmpeg_filter_vf": filter_vf,
-        "captions_burned": False,
-        "voiceover_muxed": False,
+        "captions_burned": captioned,
+        "voiceover_muxed": vo_muxed,
+        "soundtrack_used": bool(soundtrack_path),
+        "voiceover_uri": vo_uri,
         "status": status,
     }
     ctx.state["production"] = result
     ctx.log(f"    [tool:composite_timeline] {len(clips)} beats, grade={grade} "
-            f"native-audio, no overlays -> {final_uri} ({status})")
+            f"vo={'on' if vo_muxed else 'off'} music={'on' if result['soundtrack_used'] else 'off'} "
+            f"captions={'on' if captioned else 'off'} -> {final_uri} ({status})")
     return result

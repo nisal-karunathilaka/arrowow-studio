@@ -1,0 +1,14 @@
+{"ts": 1782851098.301, "kind": "image", "model": "gemini-3.1-flash-image", "units": 1, "unit": "images", "cost_usd": 0.04, "live": true}
+{"ts": 1782851272.988, "kind": "video", "model": "veo-3.1-generate-001", "units": 8, "unit": "seconds", "cost_usd": 1.2, "live": true}
+{"ts": 1782851289.034, "kind": "llm", "model": "gemini-3.1-pro", "units": 2178, "unit": "tokens", "cost_usd": 0.003604, "live": true}
+{"ts": 1782851387.113, "kind": "video", "model": "veo-3.1-generate-001", "units": 8, "unit": "seconds", "cost_usd": 1.2, "live": true}
+{"ts": 1782851402.258, "kind": "llm", "model": "gemini-3.1-pro", "units": 2300, "unit": "tokens", "cost_usd": 0.004079, "live": true}
+{"ts": 1782851594.463, "kind": "image", "model": "gemini-3.1-flash-image", "units": 1, "unit": "images", "cost_usd": 0.04, "live": true}
+{"ts": 1782851683.581, "kind": "video", "model": "veo-3.1-generate-001", "units": 8, "unit": "seconds", "cost_usd": 1.2, "live": true}
+{"ts": 1782851708.344, "kind": "llm", "model": "gemini-3.1-pro", "units": 2347, "unit": "tokens", "cost_usd": 0.00431, "live": true}
+{"ts": 1782852076.93, "kind": "video", "model": "veo-3.1-generate-001", "units": 8, "unit": "seconds", "cost_usd": 1.2, "live": true}
+{"ts": 1782852099.763, "kind": "llm", "model": "gemini-3.1-pro", "units": 2431, "unit": "tokens", "cost_usd": 0.004738, "live": true}
+{"ts": 1782852383.447, "kind": "video", "model": "veo-3.1-generate-001", "units": 8, "unit": "seconds", "cost_usd": 1.2, "live": true}
+{"ts": 1782852400.263, "kind": "llm", "model": "gemini-3.1-pro", "units": 2334, "unit": "tokens", "cost_usd": 0.004249, "live": true}
+{"ts": 1782852489.268, "kind": "video", "model": "veo-3.1-generate-001", "units": 8, "unit": "seconds", "cost_usd": 1.2, "live": true}
+{"ts": 1782852507.323, "kind": "llm", "model": "gemini-3.1-pro", "units": 2484, "unit": "tokens", "cost_usd": 0.004999, "live": true}

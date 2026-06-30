@@ -17,9 +17,9 @@ venv_system/
 
 # Generated media & session artifacts
 output/
-*.mp4
-*.mp3
-*.png
+/*.mp4
+/*.mp3
+/*.png
 
 # OS noise
 .DS_Store

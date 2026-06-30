@@ -1,6 +1,0 @@
-file '/Users/nisal/Desktop/Arrowow/Arrowow Studio/output/0fd35872-5371-4b2f-8d70-a033cfc4e941/veo_final_0d5d5b.mp4'
-file '/Users/nisal/Desktop/Arrowow/Arrowow Studio/output/0fd35872-5371-4b2f-8d70-a033cfc4e941/veo_final_e45de0.mp4'
-file '/Users/nisal/Desktop/Arrowow/Arrowow Studio/output/0fd35872-5371-4b2f-8d70-a033cfc4e941/veo_final_ecfd86.mp4'
-file '/Users/nisal/Desktop/Arrowow/Arrowow Studio/output/0fd35872-5371-4b2f-8d70-a033cfc4e941/veo_final_d0c7eb.mp4'
-file '/Users/nisal/Desktop/Arrowow/Arrowow Studio/output/0fd35872-5371-4b2f-8d70-a033cfc4e941/veo_final_85ef34.mp4'
-file '/Users/nisal/Desktop/Arrowow/Arrowow Studio/output/0fd35872-5371-4b2f-8d70-a033cfc4e941/veo_final_37ba08.mp4'

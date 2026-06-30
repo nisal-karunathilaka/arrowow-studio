@@ -1,2 +1,0 @@
-# Arrowow Studio — UI layer dependency (on top of the existing google-genai / vertexai stack)
-streamlit>=1.58

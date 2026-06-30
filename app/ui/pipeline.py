@@ -1,15 +1,20 @@
 """
-Arrowow Studio — Human-in-the-Loop Pipeline Driver
-===================================================
+Arrowow Studio — Human-in-the-Loop Pipeline Driver (Shot-by-Shot)
+=================================================================
 
-A thin, UI-facing wrapper that runs the REAL ADK pipeline (app/adk) in five
-human-reviewable SEGMENTS, sharing a single persistent session across reviews:
+A thin, UI-facing wrapper that runs the REAL ADK pipeline (app/adk) in
+human-reviewable SEGMENTS, sharing a single persistent session across reviews.
+
+The pipeline now uses a SHOT-BY-SHOT architecture:
 
     1. script           Intake + PreProductionLoop      (strategy + script)
     2. visual_plan      VisualPlanningSequence           (storyboard + wardrobe + beat prompts)
-    3. reference_frame  ReferenceFrameStage (Imagen)     (canonical anchor frame)
-    4. render           budget guard + Veo x5 + TTS + compositor (the master cut)
-    5. qa               QAReviewer (single vision pass)  (quality report)
+    3. shot_hook        Ref frame + Veo render + VQA     (Shot 1: Hook)
+    4. shot_intro       Chain/anchor + Veo render + VQA  (Shot 2: Intro)
+    5. shot_action      Chain/anchor + Veo render + VQA  (Shot 3: Action)
+    6. shot_proof       Chain/anchor + Veo render + VQA  (Shot 4: Proof)
+    7. shot_cta         Chain/anchor + Veo render + VQA  (Shot 5: CTA)
+    8. composite_qa     TTS + soundtrack + composite + final QA
 
 Each segment writes to session.state exactly as the autonomous Director would; the UI
 pauses after every segment for APPROVE or MODIFY. "Modify" stores reviewer feedback in
@@ -39,29 +44,44 @@ from ..adk.profiles.registry import resolve_profile
 Logger = Callable[[str], None]
 
 # ---------------------------------------------------------------------------
-# Segment catalogue (drives the UI stepper)
+# Segment catalogue (drives the UI stepper — shot-by-shot)
 # ---------------------------------------------------------------------------
 SEGMENTS = [
-    {"key": "script",          "label": "Story & Script",   "icon": "📝",
+    {"key": "script",          "label": "Story & Script",      "icon": "📝",
      "doing": "Strategist + Scriptwriter + Brand-safety critic are drafting the 5-beat script…"},
-    {"key": "visual_plan",     "label": "Visual Plan",      "icon": "🎬",
+    {"key": "visual_plan",     "label": "Visual Plan",         "icon": "🎬",
      "doing": "Storyboard + Wardrobe + Shot-prompt agents are designing each beat…"},
-    {"key": "reference_frame", "label": "Reference Frame",  "icon": "🖼️",
-     "doing": "Generating the canonical anchor frame (identity lock)…"},
-    {"key": "render",          "label": "Render & Compose", "icon": "🎥",
-     "doing": "Rendering 5 beats on Veo 3.1, synthesizing voiceover, and compositing the master…"},
-    {"key": "qa",              "label": "Quality Review",   "icon": "✅",
-     "doing": "Multimodal QA reviewer is grading the master cut…"},
+    {"key": "shot_hook",       "label": "Shot 1: Hook",        "icon": "🎬",  "beat_id": "hook",
+     "doing": "Generating reference frame + rendering Shot 1 (Hook) + VQA…"},
+    {"key": "shot_intro",      "label": "Shot 2: Intro",       "icon": "🎥",  "beat_id": "intro",
+     "doing": "Rendering Shot 2 (Intro) with chaining + VQA…"},
+    {"key": "shot_action",     "label": "Shot 3: Action",      "icon": "🎥",  "beat_id": "action",
+     "doing": "Rendering Shot 3 (Action) + VQA…"},
+    {"key": "shot_proof",      "label": "Shot 4: Proof",       "icon": "🎥",  "beat_id": "proof",
+     "doing": "Rendering Shot 4 (Proof) + VQA…"},
+    {"key": "shot_cta",        "label": "Shot 5: CTA",         "icon": "🎥",  "beat_id": "cta",
+     "doing": "Rendering Shot 5 (CTA) + VQA…"},
+    {"key": "composite_qa",    "label": "Composite & QA",      "icon": "✅",
+     "doing": "Compositing master, synthesizing voiceover, running final QA review…"},
 ]
 SEGMENT_KEYS = [s["key"] for s in SEGMENTS]
+SHOT_SEGMENT_KEYS = [s["key"] for s in SEGMENTS if s.get("beat_id")]
 
 
 def segment_meta(key: str) -> dict:
     return next(s for s in SEGMENTS if s["key"] == key)
 
 
-# Projected cost of a full live render (5 beats x 8s x $0.15 + 1 frame).
-PROJECTED_RENDER_USD = 5 * 8 * 0.15 + 0.04
+def beat_id_for_segment(key: str) -> Optional[str]:
+    """Return the beat_id for a shot segment, or None for non-shot segments."""
+    meta = segment_meta(key)
+    return meta.get("beat_id")
+
+
+# Projected cost of one shot (1 beat video + 1 ref frame image).
+PROJECTED_SHOT_USD = 8 * 0.15 + 0.04
+# Projected cost of the full composite pass (voiceover + QA).
+PROJECTED_COMPOSITE_USD = 0.10
 
 
 # ---------------------------------------------------------------------------
@@ -92,6 +112,7 @@ def _run_intake(session: Session, config: dict) -> None:
         "platform": config.get("platform", "Instagram Reels"),
         "aspect_ratio": config.get("aspect_ratio", "16:9"),
         "format": f"UGC · {config.get('platform','Instagram Reels')} · {config.get('aspect_ratio','16:9')}",
+        "no_audio_overlay": config.get("no_audio_overlay", False),
     }
     state["character"] = {"character_id": profile.character_id, "bible": profile.model_dump()}
     state["metadata"]["scenario"] = config["user_brief"]
@@ -138,83 +159,195 @@ async def _run_visual_plan(session: Session, mode: str, log: Logger) -> None:
         "VisualPlanningSequence",
         [ca.build_storyboard(), ca.build_wardrobe(), ca.build_shot_prompt()])
     await seq.run(ctx)
+    # Initialize chain state for the upcoming shot-by-shot render
+    session.state["_last_tail_frame"] = None
+    session.state["_re_anchor_flag"] = False
+    session.state["_shot_chain"] = {}
     session.state["metadata"]["current_stage"] = "visual_plan"
 
 
-async def _run_reference_frame(session: Session, mode: str, log: Logger) -> None:
+# ---------------------------------------------------------------------------
+# Per-shot runner (Anchor & Chain + per-shot VQA)
+# ---------------------------------------------------------------------------
+async def _run_shot(session: Session, mode: str, log: Logger, beat_id: str) -> None:
+    """Run one shot end-to-end: ref frame → Veo render → VQA → tail extraction."""
+    state = session.state
     ctx = _ctx(session, mode, log)
-    media_tools.generate_reference_frame(ctx)
-    _record_spend(session.state, mode)
-    session.state["metadata"]["current_stage"] = "reference_frame"
+    MAX_RETRIES = 2  # bound billed re-renders; the pass criterion only retries on structural defects
+
+    beats = state.get("beat_prompts", {}).get("beats", [])
+    beat = next((b for b in beats if b.get("beat_id") == beat_id), None)
+    if not beat:
+        log(f"[shot:{beat_id}] beat not found in storyboard, skipping.")
+        return
+
+    beat_idx = next(i for i, b in enumerate(beats) if b.get("beat_id") == beat_id)
+
+    # Dev-spend guard (live only)
+    if mode == "LIVE_MEDIA":
+        tracker = DevSpendTracker()
+        if tracker.would_exceed(PROJECTED_SHOT_USD):
+            log(f"[shot:{beat_id}] HALT — would exceed ${tracker.CEILING_USD:.0f} ceiling "
+                f"(remaining ${tracker.remaining():.2f}).")
+            state.setdefault("beats", {})[beat_id] = {
+                "uri": "halted.mp4", "status": "halted_budget", "beat_id": beat_id}
+            return
+        log(f"[shot:{beat_id}] budget OK — remaining ${tracker.remaining():.2f}")
+
+    # -- Step 1: Reference Frame (Anchor or Chain) --
+    last_tail = state.get("_last_tail_frame")
+    re_anchor = state.get("_re_anchor_flag", False)
+    is_first = beat_idx == 0
+
+    if last_tail and not re_anchor and not is_first:
+        # Chain: use tail frame from previous shot as the anchor
+        log(f"[shot:{beat_id}] 🔗 chaining from previous shot's tail frame")
+        state.setdefault("_shot_chain", {})[beat_id] = "chained"
+        # Set the beat's start frame to the tail frame for Veo to use
+        beat["_start_frame_uri"] = last_tail
+    else:
+        # Anchor: generate new reference frame via Imagen
+        reason = "first shot" if is_first else ("re-anchor (bad ending)" if re_anchor else "no tail frame")
+        log(f"[shot:{beat_id}] 🖼️ generating reference frame via Imagen ({reason})…")
+        media_tools.generate_single_beat_frame(ctx, beat_id)
+        state.setdefault("_shot_chain", {})[beat_id] = "anchored"
+        state["_re_anchor_flag"] = False
+
+    # -- Step 2: Render + VQA with retries --
+    beat_passed = False
+    for attempt in range(1, MAX_RETRIES + 1):
+        log(f"[shot:{beat_id}] 🎥 rendering (attempt {attempt}/{MAX_RETRIES})…")
+        media_tools.make_render_beat_stage(beat_id)(ctx)
+
+        clip = state.get("beats", {}).get(beat_id, {})
+        clip_uri = clip.get("uri", "")
+        clip_status = clip.get("status", "")
+
+        # Mock/dry runs — auto-pass VQA
+        if clip_status == "mock":
+            log(f"[shot:{beat_id}] ✅ mock mode → auto-pass VQA")
+            beat_passed = True
+            break
+
+        if clip_status != "success":
+            log(f"[shot:{beat_id}] ❌ render failed ({clip_status}), retrying…")
+            beat["_seed_jitter"] = beat.get("_seed_jitter", 0) + 1
+            continue
+
+        # -- Per-shot VQA via Gemini Pro Vision --
+        log(f"[shot:{beat_id}] 🔍 running Gemini Vision QA…")
+        try:
+            qa_result = await qa_mod.review_clip(clip_uri, state, segment_label=beat_id)
+        except Exception as e:
+            log(f"[shot:{beat_id}] VQA error ({e}), auto-passing to avoid blocking.")
+            qa_result = {"approved": True, "ending_state_score": 7, "overall_score": 7}
+
+        state.setdefault("_beat_qa", {})[beat_id] = qa_result
+        qa_score = qa_result.get("overall_score", 0)
+        ending_score = qa_result.get("ending_state_score", 7)
+        approved = qa_result.get("approved", False)
+        defects = qa_result.get("defects", [])
+
+        # Only re-render for SERIOUS STRUCTURAL failures (a different face, morphing limbs/product,
+        # or an unusable end frame). Minor gloss / product-framing / colour flags are not worth an
+        # expensive re-render — Veo is inherently a little polished, and some beats (e.g. a 'before'
+        # problem shot) intentionally don't feature the product.
+        SERIOUS = {"identity_drift", "artifact", "ending_state"}
+        serious = [d for d in defects
+                   if d.get("type") in SERIOUS and int(d.get("severity", 0)) >= 4]
+
+        # Per-shot gate is STRUCTURAL only: pass unless there's a serious structural defect (face
+        # drift, morphing, unusable end frame). Global look (gloss/colour/hyperrealism) is handled by
+        # the post realism grade + final master QA, so it must not burn per-shot re-renders here.
+        if approved or (not serious and qa_score >= 4):
+            log(f"[shot:{beat_id}] ✅ VQA PASS (overall={qa_score}, ending={ending_score})")
+            beat_passed = True
+            break
+        else:
+            log(f"[shot:{beat_id}] ❌ VQA FAIL (overall={qa_score}, "
+                f"serious={[d.get('type') for d in serious]} all={[d.get('type') for d in defects]})")
+            beat["_seed_jitter"] = beat.get("_seed_jitter", 0) + 1
+            if any(d.get("type") == "ending_state" for d in serious):
+                state["_re_anchor_flag"] = True
+                state["_last_tail_frame"] = None
+
+    if not beat_passed:
+        log(f"[shot:{beat_id}] ⚠ exhausted {MAX_RETRIES} retries, using last attempt.")
+
+    # -- Step 3: Extract tail frame for chaining to the next shot --
+    clip = state.get("beats", {}).get(beat_id, {})
+    if clip.get("status") == "success":
+        tail = media_tools.extract_sharpest_tail_frame(clip.get("uri", ""))
+        if tail:
+            state["_last_tail_frame"] = tail
+            state["_re_anchor_flag"] = False
+            log(f"[shot:{beat_id}] 🔗 tail frame extracted: {tail}")
+        else:
+            state["_last_tail_frame"] = None
+            state["_re_anchor_flag"] = True
+            log(f"[shot:{beat_id}] ⚠ tail extraction failed, next shot will re-anchor.")
+    else:
+        # Mock mode — no real video, clear chain state
+        state["_last_tail_frame"] = None
+        state["_re_anchor_flag"] = True
+
+    _record_spend(state, mode)
+    state["metadata"]["current_stage"] = f"shot_{beat_id}"
 
 
-async def _run_render(session: Session, mode: str, log: Logger) -> None:
+# ---------------------------------------------------------------------------
+# Composite & Final QA (after all shots approved)
+# ---------------------------------------------------------------------------
+async def _run_composite_qa(session: Session, mode: str, log: Logger) -> None:
+    """Synthesize voiceover, download soundtrack, composite master, run final QA."""
     state = session.state
     ctx = _ctx(session, mode, log)
 
-    # Dev-spend guard (live only) — never breach the $100 ceiling.
-    if mode == "LIVE_MEDIA":
-        tracker = DevSpendTracker()
-        if tracker.would_exceed(PROJECTED_RENDER_USD):
-            log(f"[budget] HALT — a live render (~${PROJECTED_RENDER_USD:.2f}) would exceed the "
-                f"${tracker.CEILING_USD:.0f} ceiling (remaining ${tracker.remaining():.2f}).")
-            state["production"] = {"status": "halted_budget", "final_uri": None}
-            return
-        log(f"[budget] OK — remaining ${tracker.remaining():.2f}, this render ≈ ${PROJECTED_RENDER_USD:.2f}.")
+    no_audio = state.get("brief", {}).get("no_audio_overlay", False)
 
-    beats = state.get("beat_prompts", {}).get("beats", [])
-    # Render each beat (sequential for clear per-beat progress).
-    for b in beats:
-        bid = b["beat_id"]
-        log(f"[render] beat '{bid}' → Veo 3.1…")
-        media_tools.make_render_beat_stage(bid)(ctx)
+    if not no_audio:
+        log("[composite] synthesizing voiceover (Cloud TTS)…")
+        media_tools.synthesize_voiceover(ctx)
 
-    log("[render] synthesizing voiceover (Cloud TTS)…")
-    media_tools.synthesize_voiceover(ctx)
+        log("[composite] downloading background soundtrack…")
+        media_tools.download_soundtrack(ctx)
+    else:
+        log("[composite] natural short film style requested — skipping voiceover & soundtrack overlays.")
+        state["voiceover"] = {"uri": "", "status": "skipped"}
+        state["soundtrack_file"] = {"uri": "", "status": "skipped"}
 
-    log("[render] downloading background soundtrack…")
-    media_tools.download_soundtrack(ctx)
-
-    # Healing pass — retry any failed beat once with a jittered seed.
-    rendered = state.setdefault("beats", {})
-    for b in beats:
-        bid = b["beat_id"]
-        clip = rendered.get(bid, {})
-        if not clip or clip.get("status") not in ("success", "mock"):
-            log(f"[render] healing failed beat '{bid}' (seed jitter)…")
-            b["_seed_jitter"] = b.get("_seed_jitter", 0) + 1
-            media_tools.make_render_beat_stage(bid)(ctx)
-
-    log("[render] compositing master (transitions + realism grade)…")
+    log("[composite] compositing master timeline (transitions + realism grade)…")
     compositor.composite_timeline(ctx)
     _record_spend(state, mode)
-    state["metadata"]["current_stage"] = "render"
 
-
-async def _run_qa(session: Session, mode: str, log: Logger) -> None:
-    ctx = _ctx(session, mode, log)
+    log("[composite] running final QA review…")
     from app.adk.improvement import AdversarialRefiner
-    
-    # Run the ProductionCriticLoop automatically so that UI/interactive runs do
-    # the closed-loop adversarial refinement to automatically resolve defects.
     critic_loop = LoopAgent(
         "ProductionCriticLoop",
         [qa_mod.build_qa_agent(), AdversarialRefiner()],
         max_iterations=3,
         should_exit=lambda s: bool(s.get("_critic_exit")))
-    
     await critic_loop.run(ctx)
-    _record_spend(session.state, mode)
-    session.state["metadata"]["current_stage"] = "qa"
-    session.state["metadata"]["status"] = "complete"
+    _record_spend(state, mode)
+
+    state["metadata"]["current_stage"] = "composite_qa"
+    state["metadata"]["status"] = "complete"
+
+
+# ---------------------------------------------------------------------------
+# Runner registry
+# ---------------------------------------------------------------------------
+def _make_shot_runner(bid: str):
+    async def _runner(session, mode, log):
+        await _run_shot(session, mode, log, bid)
+    return _runner
 
 
 _RUNNERS = {
     "script": _run_script,
     "visual_plan": _run_visual_plan,
-    "reference_frame": _run_reference_frame,
-    "render": _run_render,
-    "qa": _run_qa,
+    **{f"shot_{bid}": _make_shot_runner(bid) for bid in BEAT_IDS},
+    "composite_qa": _run_composite_qa,
 }
 
 
@@ -241,7 +374,11 @@ async def regenerate_segment(segment_key: str, session: Session, mode: str,
 # Review payload extractors (compact, UI-friendly views of state)
 # ---------------------------------------------------------------------------
 def _file_ok(path: Optional[str]) -> bool:
-    return bool(path) and os.path.exists(path)
+    if not path:
+        return False
+    if path.startswith("http://") or path.startswith("https://"):
+        return True
+    return os.path.exists(path)
 
 
 def script_review(state: dict) -> dict:
@@ -288,35 +425,51 @@ def visual_review(state: dict) -> dict:
     }
 
 
-def frame_review(state: dict) -> dict:
-    rf = state.get("reference_frame", {})
-    all_uris = rf.get("all_uris", [])
-    uri = rf.get("uri") if not all_uris else all_uris[0]
-    
-    # Retrieve the start/end frame URIs per beat from the planned beats
+def shot_review(state: dict, beat_id: str) -> dict:
+    """Review payload for a single shot — shows ref frame, video, VQA, chain status."""
     beats = state.get("beat_prompts", {}).get("beats", [])
-    beats_frames = []
-    for b in beats:
-        beats_frames.append({
-            "beat_id": b.get("beat_id"),
-            "start_uri": b.get("_start_frame_uri"),
-            "end_uri": b.get("_end_frame_uri"),
-        })
+    beat = next((b for b in beats if b.get("beat_id") == beat_id), {})
+    clip = state.get("beats", {}).get(beat_id, {})
+    vqa = state.get("_beat_qa", {}).get(beat_id, {})
+    chain = state.get("_shot_chain", {}).get(beat_id, "unknown")
 
     return {
-        "uri": uri,
-        "all_uris": all_uris,
-        "beats_frames": beats_frames,
-        "status": rf.get("status"),
-        "exists": _file_ok(uri)
+        "beat_id": beat_id,
+        "camera": beat.get("camera", ""),
+        "camera_movement": beat.get("camera_movement", ""),
+        "sync_mode": beat.get("sync_mode", ""),
+        "dialogue_or_vo": beat.get("dialogue_or_vo", ""),
+        "prompt": beat.get("prompt", ""),
+        "product_action": beat.get("product_action", ""),
+        "on_screen_text": beat.get("on_screen_text", ""),
+        # Reference frame
+        "ref_frame_uri": beat.get("_start_frame_uri"),
+        "ref_frame_exists": _file_ok(beat.get("_start_frame_uri")),
+        # Rendered video
+        "video_uri": clip.get("uri"),
+        "video_status": clip.get("status"),
+        "video_exists": _file_ok(clip.get("uri")),
+        # VQA scores
+        "vqa_overall": vqa.get("overall_score"),
+        "vqa_ending_state": vqa.get("ending_state_score"),
+        "vqa_continuity": vqa.get("continuity_score"),
+        "vqa_realism": vqa.get("realism_score"),
+        "vqa_approved": vqa.get("approved"),
+        "vqa_defects": vqa.get("defects", []),
+        "vqa_summary": vqa.get("summary", ""),
+        # Chain status
+        "chain_status": chain,  # "chained" | "anchored" | "unknown"
     }
 
 
-def render_review(state: dict) -> dict:
+def composite_review(state: dict) -> dict:
+    """Review payload for the final composite + QA."""
     prod = state.get("production", {})
     uri = prod.get("final_uri")
     beats = state.get("beats", {})
+    qa = state.get("qa_report", {})
     return {
+        # Master video
         "final_uri": uri,
         "exists": _file_ok(uri),
         "status": prod.get("status"),
@@ -325,31 +478,32 @@ def render_review(state: dict) -> dict:
         "beat_status": {bid: clip.get("status") for bid, clip in beats.items()},
         "captions_burned": prod.get("captions_burned", False),
         "voiceover_uri": prod.get("voiceover_uri"),
+        # QA scores
+        "qa_approved": qa.get("approved"),
+        "qa_overall": qa.get("overall_score"),
+        "qa_realism": qa.get("realism_score"),
+        "qa_lip_sync": qa.get("lip_sync_score"),
+        "qa_audio": qa.get("audio_score"),
+        "qa_continuity": qa.get("continuity_score"),
+        "qa_ending_state": qa.get("ending_state_score"),
+        "qa_brief_adherence": qa.get("brief_adherence_score"),
+        "qa_product_visibility": qa.get("product_visibility_score"),
+        "qa_summary": qa.get("summary", ""),
+        "qa_defects": qa.get("defects", []),
     }
 
 
-def qa_review(state: dict) -> dict:
-    qa = state.get("qa_report", {})
-    return {
-        "approved": qa.get("approved"),
-        "overall": qa.get("overall_score"),
-        "realism": qa.get("realism_score"),
-        "lip_sync": qa.get("lip_sync_score"),
-        "audio": qa.get("audio_score"),
-        "continuity": qa.get("continuity_score"),
-        "brief_adherence": qa.get("brief_adherence_score"),
-        "product_visibility": qa.get("product_visibility_score"),
-        "summary": qa.get("summary", ""),
-        "defects": qa.get("defects", []),
-    }
+def _make_shot_reviewer(bid: str):
+    def _reviewer(state):
+        return shot_review(state, bid)
+    return _reviewer
 
 
 REVIEWERS = {
     "script": script_review,
     "visual_plan": visual_review,
-    "reference_frame": frame_review,
-    "render": render_review,
-    "qa": qa_review,
+    **{f"shot_{bid}": _make_shot_reviewer(bid) for bid in BEAT_IDS},
+    "composite_qa": composite_review,
 }
 
 

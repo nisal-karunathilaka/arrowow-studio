@@ -1,0 +1,15 @@
+{
+  "session_id": "vid_26f1b7d9",
+  "mode": "LIVE_MEDIA",
+  "total_estimated_cost_usd": 7.306,
+  "calls": 14,
+  "tokens": {
+    "in": 11838,
+    "out": 2236
+  },
+  "video_seconds": 48,
+  "images": 2,
+  "tts_chars": 0,
+  "regenerations": 0,
+  "budget_status": "within_limit"
+}
