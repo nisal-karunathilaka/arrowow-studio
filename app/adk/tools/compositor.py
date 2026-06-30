@@ -23,6 +23,12 @@ from ..profiles.realism import UGC_REALISM
 
 BEAT_ORDER = ["hook", "intro", "action", "proof", "cta"]
 TRANSITIONS = {"intro": "match_cut", "action": "whip_pan", "proof": "macro_zoom", "cta": "xfade"}
+TRANSITION_SETTINGS = {
+    "match_cut": {"type": "fade", "duration": 0.05},
+    "whip_pan": {"type": "slideleft", "duration": 0.4},
+    "macro_zoom": {"type": "zoomin", "duration": 0.5},
+    "xfade": {"type": "fade", "duration": 0.5}
+}
 
 # Each beat occupies ~7.5s of the crossfaded timeline (8s clip - 0.5s overlap).
 BEAT_SPAN_S = 7.5
@@ -53,10 +59,11 @@ def _clip_has_audio(path: str) -> bool:
         return False
 
 
-def _ffmpeg_concat_grade(clip_paths: list[str], out_path: str, filter_vf: str) -> bool:
+def _ffmpeg_concat_grade(clip_paths: list[str], out_path: str, filter_vf: str, soundtrack_path: str = None) -> bool:
     """Concat clips, apply professional crossfade transitions (0.5s overlap), and grade.
     Handles clips that may not have an audio track (e.g., voiceover-mode Veo clips)
-    by inserting a silent anullsrc for those positions."""
+    by inserting a silent anullsrc for those positions.
+    Mixes background soundtrack if provided."""
     existing = [p for p in clip_paths if p and os.path.exists(p)]
     if not existing:
         return False
@@ -68,12 +75,16 @@ def _ffmpeg_concat_grade(clip_paths: list[str], out_path: str, filter_vf: str) -
     for p in existing:
         cmd += ["-i", p]
     n = len(existing)
+    
+    st_idx = n
+    if soundtrack_path and os.path.exists(soundtrack_path):
+        cmd += ["-i", soundtrack_path]
 
     if n == 1:
         if any_audio:
-            filtergraph = f"[0:v]{filter_vf}[v];[0:a]anull[a]"
+            filtergraph = f"[0:v]{filter_vf}[v];[0:a]anull[a_master]"
         else:
-            filtergraph = f"[0:v]{filter_vf}[v];anullsrc=r=44100:cl=stereo[a]"
+            filtergraph = f"[0:v]{filter_vf}[v];anullsrc=r=44100:cl=stereo[a_master]"
     else:
         v_parts = []
         a_parts = []
@@ -90,23 +101,45 @@ def _ffmpeg_concat_grade(clip_paths: list[str], out_path: str, filter_vf: str) -
                 audio_labels.append(lbl)
                 null_idx += 1
 
-        # Video crossfade chain
-        v_parts.append(f"[0:v][1:v]xfade=transition=fade:duration=0.5:offset=7.5[v0]")
-        for i in range(2, n):
-            offset = 7.5 + (i - 1) * 7.5
-            v_parts.append(f"[v{i-2}][{i}:v]xfade=transition=fade:duration=0.5:offset={offset}[v{i-1}]")
+        # Video crossfade chain with dynamic transitions and offsets
+        cumulative_duration = 0.0
+        for i in range(1, n):
+            beat_name = BEAT_ORDER[i]
+            t_name = TRANSITIONS.get(beat_name, "xfade")
+            t_set = TRANSITION_SETTINGS.get(t_name, {"type": "fade", "duration": 0.5})
+            t_type = t_set["type"]
+            t_dur = t_set["duration"]
+            
+            offset = (i * 8.0) - cumulative_duration - t_dur
+            
+            in1 = "[0:v]" if i == 1 else f"[v{i-2}]"
+            in2 = f"[{i}:v]"
+            out = f"[v{i-1}]"
+            
+            v_parts.append(f"{in1}{in2}xfade=transition={t_type}:duration={t_dur:.2f}:offset={offset:.2f}{out}")
+            cumulative_duration += t_dur
 
-        # Audio crossfade chain using the (possibly-null) audio labels
-        a_parts.append(f"{audio_labels[0]}{audio_labels[1]}acrossfade=d=0.5:c1=tri:c2=tri[a0]")
+        # Audio crossfade chain using the (possibly-null) audio labels and dynamic durations
+        t_name0 = TRANSITIONS.get(BEAT_ORDER[1], "xfade")
+        t_dur0 = TRANSITION_SETTINGS.get(t_name0, {"duration": 0.5})["duration"]
+        a_parts.append(f"{audio_labels[0]}{audio_labels[1]}acrossfade=d={t_dur0:.2f}:c1=tri:c2=tri[a0]")
         for i in range(2, n):
-            a_parts.append(f"[a{i-2}]{audio_labels[i]}acrossfade=d=0.5:c1=tri:c2=tri[a{i-1}]")
+            beat_name = BEAT_ORDER[i]
+            t_name = TRANSITIONS.get(beat_name, "xfade")
+            t_dur = TRANSITION_SETTINGS.get(t_name, {"duration": 0.5})["duration"]
+            a_parts.append(f"[a{i-2}]{audio_labels[i]}acrossfade=d={t_dur:.2f}:c1=tri:c2=tri[a{i-1}]")
 
         last_idx = n - 2
         filtergraph = (
             ";".join(v_parts) + ";" +
             ";".join(a_parts) + ";" +
-            f"[v{last_idx}]{filter_vf}[v];[a{last_idx}]anull[a]"
+            f"[v{last_idx}]{filter_vf}[v];[a{last_idx}]anull[a_master]"
         )
+
+    if soundtrack_path and os.path.exists(soundtrack_path):
+        filtergraph += f";[{st_idx}:a]volume=0.12[st_vol];[a_master][st_vol]amix=inputs=2:duration=first:dropout_transition=0[a]"
+    else:
+        filtergraph = filtergraph.replace("[a_master]", "[a]")
 
     cmd += ["-filter_complex", filtergraph, "-map", "[v]", "-map", "[a]",
             "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "aac", out_path]
@@ -258,6 +291,16 @@ def _caption_windows(state: dict) -> list[tuple[str, float, float]]:
 
 
 def composite_timeline(ctx: InvocationContext) -> dict:
+    # Validate that all expected beats have rendered successfully
+    beats_state = ctx.state.get("beats", {})
+    expected_beats = [b for b in BEAT_ORDER if beats_state.get(b) and beats_state[b].get("status") != "skipped"]
+    failed_beats = [b for b in expected_beats if beats_state[b].get("status") not in ("success", "mock")]
+    if failed_beats:
+        raise ValueError(
+            f"Cannot composite timeline: the following beats failed to render: {', '.join(failed_beats)}. "
+            f"Please check logs for safety filter blocks or API issues."
+        )
+
     clips = _ordered_clips(ctx.state)
     transition_plan = [{"into": b, "transition": TRANSITIONS.get(b, "cut")} for b in BEAT_ORDER]
     grade = UGC_REALISM.grade_directives()
@@ -280,11 +323,12 @@ def composite_timeline(ctx: InvocationContext) -> dict:
     filter_vf = f"noise=alls={noise_val}:allf=t,eq=saturation={sat_val:.2f}:contrast={con_val:.2f}:brightness={br_val:.2f}"
 
     status = "mock"
+    soundtrack_path = ctx.state.get("soundtrack_file", {}).get("uri")
     if ctx.mode == "LIVE_MEDIA":
         # The talent speaks natively (Veo generates her voice + lip-sync), so the master is simply
         # the graded concatenation of the native clips — NO separate voiceover audio overlay and NO
         # on-screen-text/caption overlay (the character and product carry the ad).
-        ok = _ffmpeg_concat_grade([c.get("uri") for c in clips], final_uri, filter_vf)
+        ok = _ffmpeg_concat_grade([c.get("uri") for c in clips], final_uri, filter_vf, soundtrack_path)
         status = "success" if ok else "failed"
 
     result = {

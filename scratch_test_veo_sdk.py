@@ -3,8 +3,13 @@ from google import genai
 from google.genai import types
 
 def test_veo_sdk():
-    project_id = "gen-lang-client-0620387606"
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.getcwd(), "google-credentials.json")
+    cred_path = os.path.join(os.getcwd(), "google-credentials.json")
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = cred_path
+    
+    import json
+    with open(cred_path, "r") as f:
+        creds = json.load(f)
+        project_id = creds.get("project_id")
     
     # Initialize the client with Vertex AI
     client = genai.Client(vertexai=True, project=project_id, location="us-central1")

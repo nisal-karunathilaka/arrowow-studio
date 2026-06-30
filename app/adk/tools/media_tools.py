@@ -59,26 +59,84 @@ def _is_live(ctx: InvocationContext) -> bool:
 # ---------------------------------------------------------------------------
 def generate_reference_frame(ctx: InvocationContext) -> dict:
     profile = _profile(ctx.state)
-    prompt = ctx.state.get("beat_prompts", {}).get("reference_frame_prompt") \
-        or profile.casting_block()
+    beats = ctx.state.get("beat_prompts", {}).get("beats", [])
+    
     # HITL: if a reviewer rejected the previous anchor frame, fold their notes into the prompt.
     fb = (ctx.state.get("hitl_feedback") or {}).get("reference_frame")
-    if fb:
-        prompt = f"{prompt} Reviewer adjustments: {fb}."
-    prompt = prompts.apply_filter_bypass(prompt)
+    feedback_str = f" Reviewer adjustments: {fb}." if fb else ""
+
+    base_prompt = profile.casting_block() + " "
+    
+    frames_to_gen = []
+    # Map from (beat_id, "start"|"end") to index in frames_to_gen
+    frame_mapping = {}
+    
+    if beats:
+        for i, b in enumerate(beats):
+            bid = b.get("beat_id")
+            start_p = b.get("start_frame_prompt", "").strip()
+            end_p = b.get("end_frame_prompt", "").strip()
+            
+            # Start frame mapping
+            shared = False
+            if i > 0:
+                prev_b = beats[i-1]
+                prev_end_p = prev_b.get("end_frame_prompt", "").strip()
+                if start_p == prev_end_p and start_p != "":
+                    # Share the previous end frame
+                    prev_idx = frame_mapping[(prev_b.get("beat_id"), "end")]
+                    frame_mapping[(bid, "start")] = prev_idx
+                    shared = True
+                    
+            if not shared:
+                idx = len(frames_to_gen)
+                frames_to_gen.append(base_prompt + start_p)
+                frame_mapping[(bid, "start")] = idx
+                
+            # End frame mapping
+            idx = len(frames_to_gen)
+            frames_to_gen.append(base_prompt + end_p)
+            frame_mapping[(bid, "end")] = idx
+    else:
+        # Fallback if no beats planned
+        frames_to_gen.append(base_prompt + (ctx.state.get("beat_prompts", {}).get("reference_frame_prompt") or ""))
+        frame_mapping[("unknown", "start")] = 0
+        frame_mapping[("unknown", "end")] = 0
+
+    prompts_list = [prompts.apply_filter_bypass(p + feedback_str) for p in frames_to_gen]
+
+    results = []
+    canonical_anchor = profile.resolve_anchor() if not os.environ.get("ARROWOW_NO_ANCHOR") else None
 
     if _is_live(ctx):
         from app.providers.live_providers import ImagenProvider
-        result = ImagenProvider().generate_image(prompt, reference_image=None,
-                                                  output_dir=_session_dir(ctx))
-        CostLedger(ctx.state).record_image(IMAGE_MODEL, live=True)
+        provider = ImagenProvider()
+        for i, p in enumerate(prompts_list):
+            # Always refer directly to the canonical locked anchor image to prevent cumulative multi-step identity drift
+            res = provider.generate_image(p, reference_image=canonical_anchor, output_dir=_session_dir(ctx))
+            results.append(res)
+            CostLedger(ctx.state).record_image(IMAGE_MODEL, live=True)
     else:
-        result = {"uri": os.path.join(_session_dir(ctx),
-                                      f"mock_frame_{uuid.uuid4().hex[:6]}.png"), "status": "mock"}
-        CostLedger(ctx.state).record_image(IMAGE_MODEL, live=False)
+        for i, p in enumerate(prompts_list):
+            res = {"uri": os.path.join(_session_dir(ctx),
+                                       f"mock_frame_{i}_{uuid.uuid4().hex[:6]}.png"), "status": "mock"}
+            results.append(res)
+            CostLedger(ctx.state).record_image(IMAGE_MODEL, live=False)
 
+    ctx.state["reference_frames"] = results
+    ctx.log(f"    [tool:generate_reference_frame] generated {len(results)} keyframes (from {len(prompts_list)} unique prompts).")
+    
+    # Store keyframe URIs directly inside beats for easy retrieval
+    if beats:
+        for b in beats:
+            bid = b.get("beat_id")
+            start_idx = frame_mapping.get((bid, "start"), 0)
+            end_idx = frame_mapping.get((bid, "end"), 0)
+            b["_start_frame_uri"] = results[start_idx]["uri"] if start_idx < len(results) else None
+            b["_end_frame_uri"] = results[end_idx]["uri"] if end_idx < len(results) else None
+            
+    result = {"uri": results[0]["uri"] if results else "error.png", "status": "success", "all_uris": [r["uri"] for r in results]}
     ctx.state["reference_frame"] = result
-    ctx.log(f"    [tool:generate_reference_frame] -> {result['uri']} ({result['status']})")
     return result
 
 
@@ -96,13 +154,24 @@ def make_render_beat_stage(beat_id: str):
             return res
 
         seed = (profile.seed + beat.get("_seed_jitter", 0)) if beat.get("seed_locked") else None
-        # Identity-anchor rule (revised after live validation): pass the anchor to EVERY beat
-        # in which the talent appears (face or body) so her identity stays consistent across
-        # shots — decoupled from the seed/A-roll policy. Only a pure product-only object shot
-        # (features_person=False) skips the anchor, since a face reference there would prime
-        # Veo to insert a person and trip the RAI fitness filter.
-        base_anchor = None if os.environ.get("ARROWOW_NO_ANCHOR") else profile.resolve_anchor()
-        anchor = base_anchor if (beat.get("features_person", True) and base_anchor) else None
+        
+        base_anchor = profile.resolve_anchor() if not os.environ.get("ARROWOW_NO_ANCHOR") else None
+        
+        # Retrieve the keyframe URIs stored directly in the beat dictionary
+        start_frame = beat.get("_start_frame_uri") or base_anchor
+        end_frame = beat.get("_end_frame_uri")
+
+        # If the start and end frame prompts are different (e.g., wardrobe/setting transition),
+        # disable last-frame conditioning to prevent Veo from trying to morph outfits/locations,
+        # which causes visual glitches and triggers person safety filters.
+        start_p = beat.get("start_frame_prompt", "").strip()
+        end_p = beat.get("end_frame_prompt", "").strip()
+        if start_p != end_p:
+            end_frame = None
+
+        # Always use the start frame as the anchor for image-to-video generation
+        # to ensure visual continuity and prevent Veo interpolation code error (requires both start and end if end is set).
+        anchor = start_frame
         use_anchor = anchor is not None
         product_design = ctx.state.get("strategy", {}).get("product_design", "")
         final_prompt = prompts.build_beat_generation_prompt(
@@ -115,6 +184,7 @@ def make_render_beat_stage(beat_id: str):
             # under it. Because the talent is never posed "talking to camera" (voiceover action
             # shots, mouth closed), Veo produces ambient rather than clashing speech.
             r = VeoVideoProvider().generate_video(prompt=final_prompt, reference_image=anchor,
+                                                  last_frame=end_frame,
                                                   output_dir=_session_dir(ctx), seed=seed,
                                                   generate_audio=True,
                                                   aspect_ratio=_aspect_ratio(ctx.state))
@@ -161,3 +231,31 @@ def synthesize_voiceover(ctx: InvocationContext) -> dict:
     ctx.log(f"    [tool:synthesize_voiceover] {len(vo_text)} chars (voice {voice_id}) "
             f"-> {result['uri']} ({result['status']})")
     return result
+
+import urllib.request
+
+def download_soundtrack(ctx: InvocationContext) -> dict:
+    soundtrack_id = ctx.state.get("strategy", {}).get("soundtrack", "fast_electronic")
+    SOUNDTRACK_URLS = {
+        "fast_electronic": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        "hip_hop": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        "serene_instrumental": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+    }
+    url = SOUNDTRACK_URLS.get(soundtrack_id, SOUNDTRACK_URLS["fast_electronic"])
+    
+    target_dir = os.path.join(os.getcwd(), "app", "resources", "soundtracks")
+    os.makedirs(target_dir, exist_ok=True)
+    target_path = os.path.join(target_dir, f"{soundtrack_id}.mp3")
+    
+    if not os.path.exists(target_path):
+        try:
+            print(f"Downloading soundtrack {soundtrack_id}...")
+            urllib.request.urlretrieve(url, target_path)
+        except Exception as e:
+            print(f"Failed to download soundtrack: {e}")
+            return {"uri": "error.mp3", "status": "failed"}
+            
+    ctx.state["soundtrack_file"] = {"uri": target_path, "status": "success"}
+    ctx.log(f"    [tool:download_soundtrack] -> {target_path}")
+    return {"uri": target_path, "status": "success"}
+

@@ -19,14 +19,50 @@ from .profiles.realism import RealismProfile, UGC_REALISM
 # Extra blanket terms beyond a profile's own prohibited list.
 EXTRA_PROHIBITED = ["squat", "squats", "squat-proof", "sheer", "see-through", "opacity",
                     "show-through", "transparency", "sports bra", "bra", "tight", "midriff",
-                    "cleavage", "form-fitting", "chest up"]
+                    "cleavage", "form-fitting", "chest up", "crop tank", "crop top", "crop", "cropped",
+                    "adjusting", "tugging", "pulling"]
 
 FILTER_BYPASS = {
+    # Long action phrases to avoid suggestive adjustments/nudity triggers
+    "adjusts her sweatpants, pulling them up": "shrugs and gestures",
+    "pulling up the loose waistline": "shrugging",
+    "pulling up the waistband": "shrugging",
+    "holding the waistband": "resting hands on hips",
+    "pulling up her loose waistband": "shrugging",
+    "holding and pulling up": "shrugging and gesturing",
+    "pulls up her loose waistband": "stands and shrugs",
+    "pull up these pants": "wear these pants",
+    "yank up your waistband": "wear your activewear",
+    "pulling up your gear": "wearing your gear",
+    "pulling up the waistline": "shrugging",
+    "holding the waistline": "resting hands on hips",
+    "pulling up": "gesturing",
+    "pulls up": "gestures",
+    "constantly pulling up": "gesturing",
+    "constantly pulls up": "gestures",
+
+    # Downward gesturing and waistband adjustment replacements
+    "gesturing downwards naturally to invite the viewer to tap": "smiling and gesturing naturally",
+    "gesturing downwards naturally": "gesturing naturally",
+    "hands gestured downwards": "gesturing naturally",
+    "gestured downwards": "gestured with an open hand",
+    "gesturing downwards": "gesturing with an open hand",
+    "gestures downwards": "gestures with an open hand",
+    "pointing to the seamless waistband": "smiling and gesturing",
+    "pointing to the waistband": "smiling and gesturing",
+    "pointing to": "gesturing to",
+
+    # Original replacements & wardrobe coverage improvements
     "squat-proof": "performance-tested", "squats": "deep athletic knee bends",
     "squat": "deep athletic knee bend", "form-fitting": "performance", "tight leggings":
     "performance activewear pants", "tight": "performance", "sports bra": "activewear top",
+    "crop tank": "training tank", "crop top": "training top", "crop": "training", "cropped": "training",
     "midriff": "upper torso", "cleavage": "upper torso", "chest up": "upper torso",
     "sheer": "", "see-through": "", "opacity": "",
+    "sliding waistband": "waist", "waistband": "waistline",
+    "loose grey leggings": "loose grey activewear pants",
+    "loose-fitting grey leggings": "loose grey activewear pants",
+    "leggings": "activewear pants", "tugs at": "adjusts", "tugs": "adjusts",
 }
 
 # Back-compat constant (older modules import prompts.CHARACTER_LOCK).
@@ -38,10 +74,13 @@ def apply_filter_bypass(text: str) -> str:
     """Rewrite banned terms into safe equivalents (deterministic safety net)."""
     if not text:
         return text
+    import re
     out = text
-    for banned, safe in FILTER_BYPASS.items():
-        if banned in out.lower():
-            out = out.replace(banned, safe).replace(banned.capitalize(), safe)
+    # Sort keys by length descending to ensure longer phrases are replaced first
+    sorted_bypass = sorted(FILTER_BYPASS.items(), key=lambda item: len(item[0]), reverse=True)
+    for banned, safe in sorted_bypass:
+        pattern = re.compile(re.escape(banned), re.IGNORECASE)
+        out = pattern.sub(safe, out)
     return " ".join(out.split())
 
 
@@ -71,11 +110,12 @@ def strategist_instruction(profile: CharacterProfile) -> str:
         f"You are a senior Creative Strategist for high-performing short-form UGC ads. "
         f"The talent is {profile.display_name}, {profile.archetype}. {profile.brand_block()} "
         f"{BRIEF_FIDELITY_DOCTRINE} "
-        f"From the brief, extract: the exact hero PRODUCT being advertised (verbatim); a PRECISE "
         f"FIXED product_design (commit to one exact colour/material/silhouette/sole so the product "
         f"looks identical in every shot — its visual identity lock); 3-5 concrete selling points the "
-        f"visuals must demonstrate; a scroll-stopping HOOK (first 2s); a clear ANGLE; and a punchy "
-        f"CTA for a 30-second vertical video. {profile.persona_direction()}"
+        f"visuals must demonstrate; a scroll-stopping HOOK (first 2s); a clear ANGLE; a punchy "
+        f"CTA for a 30-second vertical video; and crucially, use your advanced reasoning to analyze the brief "
+        f"and select an appropriate background 'soundtrack' category (e.g., 'fast_electronic', 'hip_hop', 'serene_instrumental'). "
+        f"{profile.persona_direction()}"
         + _prohibited_clause(profile)
     )
 
@@ -136,6 +176,7 @@ def storyboard_instruction(profile: CharacterProfile) -> str:
         "CONTINUITY & TRANSITIONS:\n"
         "- Make movement/velocity flow naturally between consecutive scenes.\n"
         "- Match the subject's ending posture in scene i to their starting posture in scene i+1.\n"
+        "- Detail the exact posture, wardrobe, background, and transition description for these boundary frames to ensure visual continuity.\n"
         "- Choose camera angles/distances so transitions are not jarring.\n"
         "Output scene_actions and scene_cameras as parallel 5-element lists. Each scene_action must "
         "be specific to the brief and product, shot like a real person filming on a phone."
@@ -181,7 +222,17 @@ def shot_prompt_instruction(profile: CharacterProfile,
         "features_person=true for ALL beats (she is on screen in every shot); a detailed 'prompt'; "
         "'dialogue_or_vo' (the SHORT line she actually speaks in this beat, ~1 sentence / under 7s); "
         "'product_action' (how she shows/features the product); 'on_screen_text' may be left empty (no "
-        "text overlays are rendered — the character carries the message).\n"
+        "text overlays are rendered — the character carries the message); AND explicitly generate deeply-analyzed "
+        "'start_frame_prompt' and 'end_frame_prompt' strings.\n"
+        "DYNAMIC MODEL-ORIENTED PROMPTING: You must explicitly analyze visual continuity across beats. "
+        "If the wardrobe and location are continuous between Beat i and Beat i+1, ensure that the 'end_frame_prompt' of Beat i matches the 'start_frame_prompt' of Beat i+1 exactly to maintain perfect continuity.\n"
+        "WARDROBE OR LOCATION TRANSITION RULE: If there is a change in wardrobe or setting/location between Beat i and Beat i+1 (e.g. transitioning from Hook's casual/messy bedroom to Intro's bright gym and new activewear), the 'end_frame_prompt' of Beat i and the 'start_frame_prompt' of Beat i+1 MUST describe separate, static, fully-dressed poses. Do NOT try to match them, and do NOT write prompts describing changing clothes, morphing, transition actions, double exposures, or transitioning between two outfits (e.g., do not write 'transitioning from outfit A to B' or describe wearing elements of both). Each frame prompt must be a single static image description of the talent fully dressed in one specific outfit in one location.\n"
+        "CRITICAL FOR FRAME PROMPTS: 'start_frame_prompt' and 'end_frame_prompt' must be completely STANDALONE image generation prompts. "
+        "They MUST explicitly and fully restate the talent's CURRENT wardrobe (e.g. 'wearing baggy grey sweatpants and a neon t-shirt' or "
+        "'wearing a solid sage green training tee and matte midnight-blue leggings') and the CURRENT location for that specific beat. "
+        "If you do not specify the exact wardrobe (e.g. including both shirt and pants) in BOTH start_frame_prompt and end_frame_prompt, "
+        "the image generator will draw different clothes, causing severe wardrobe-change errors. Do NOT use pronouns or assume context; "
+        "describe the wardrobe and setting fully in every frame prompt.\n"
         "THE 'prompt' FIELD — make it strong and brief-faithful. Each prompt must concretely realize "
         "the brief's beat: the real setting, the real action, and the HERO PRODUCT featured with "
         "intentional framing (low/hero angle when the brief asks). Describe motion, energy and "
@@ -213,8 +264,16 @@ def shot_prompt_instruction(profile: CharacterProfile,
         "convey that energy through her CONFIDENT DELIVERY and light controlled movement instead of "
         "literally performing the risky move. Keep hands relaxed and visible, backgrounds uncluttered "
         "(no crowds).\n"
-        "TRANSITIONS: engineer body orientation, posture and motion vectors to flow between adjacent "
-        "beats; add explicit pose-matching descriptors at the boundaries.\n"
+        "NEVER describe the talent pulling up, tugging, yanking, adjusting, or sliding down their clothes, pants, "
+        "leggings, or waistband, as these actions resemble undressing and trigger safety filters. If the brief asks "
+        "to show clothing adjustment or complaining about slide-down, depict it solely through her facial expression, "
+        "hand shrugging/gesturing, or verbal delivery, keeping her hands completely away from her waistband/clothes.\n"
+        "TRANSITIONS & CAMERA MOTION MATCHING (critical): You must engineer the camera movement and motion vectors to align across beat boundaries, coordinating with the post-production transition engine:\n"
+        "- Hook to Intro (transition: match_cut): Ensure the ending posture of Hook matches the starting posture of Intro exactly (e.g. centered in frame, facing camera in the same pose/gaze).\n"
+        "- Intro to Action (transition: whip_pan): The prompt for Intro must end with 'The shot ends with a fast camera whip-pan to the right, blurring the scene', and the prompt for Action must start with 'The shot begins with a fast camera whip-pan from the left, settling on...'.\n"
+        "- Action to Proof (transition: macro_zoom): The prompt for Action must end with 'the camera zooms in rapidly, pushing closely into the hero product', and the prompt for Proof must start with 'the camera zooms out rapidly from the hero product, revealing...'.\n"
+        "- Proof to CTA (transition: xfade): A standard cinematic cross-dissolve. Ensure the scenes flow smoothly.\n"
+        "Ensure all boundary frame prompts ('start_frame_prompt' and 'end_frame_prompt') reflect these transitions.\n"
         "IDENTITY LOCK — anchor the subject's FIXED identity in EVERY prompt using: "
         f"'{profile.identity_lock()}'. Never use a real person's name or celebrity likeness.\n"
         f"{realism.directive_block()}"
@@ -238,15 +297,16 @@ def qa_instruction(profile: CharacterProfile, realism: RealismProfile = UGC_REAL
         "PRODUCT AS HERO (product_visibility_score): Is the hero product clearly shown and well-"
         "framed across the ad (especially the proof beat)? If the product is absent, wrong, tiny, "
         "or never the focus, score low and add a 'product' defect (severity 4-5).\n"
-        "IDENTITY (continuity_score): The talent's FACE, core features and VOICE must stay identical "
-        "across all beats — flag 'identity_drift' (severity 4-5) if the FACE changes. NOTE: wardrobe, "
+        "IDENTITY (continuity_score): The talent's FACE, core features, and the HERO PRODUCT design must stay identical "
+        "across all beats. Flag 'identity_drift' (severity 4-5) if the FACE changes or the product shape-shifts. NOTE: wardrobe, "
         "hair STYLING and makeup are INTENTIONALLY adapted to the campaign — do NOT flag those as "
-        "drift; only the face/voice/body must be constant.\n"
+        "drift; only the face/voice/body and product physical attributes must be constant.\n"
         "COLOR & REALISM: aggressively penalize glossy, saturated, cinematic teal-and-orange grading "
         "or HDR pop — footage must look flat, raw, slightly desaturated smartphone capture. Flag as "
         "'color' or 'hyperrealism' (severity 4-5) when violated.\n"
-        "MOVEMENT & TRANSITIONS: flag unnatural physics, warping, morphing hands/objects as "
-        "'artifact'/'framing'; flag jumpy discontinuities between scenes as 'transition'/'pacing'.\n"
+        "MOVEMENT, TRANSITIONS & BOUNDARIES: flag unnatural physics, warping, morphing hands/objects as "
+        "'artifact'/'framing'. For transitions, check if the end frame of a scene perfectly matches the start frame of the next "
+        "scene in posture, lighting, and wardrobe. Flag any jump cuts or mismatched poses between scenes as a 'transition' defect.\n"
         "Each defect has: type (one of lip_sync, vocal_audio, transition, soundtrack, hyperrealism, "
         "identity_drift, artifact, color, pacing, framing, brief_adherence, product), segment (beat id "
         "or 'global'), severity 1-5, a description, and a remedy_hint.\n"

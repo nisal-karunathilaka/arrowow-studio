@@ -53,9 +53,9 @@ def _apply_remedy(beat: dict, defect: dict, kb: DefectRemedyKB, log) -> str:
         beat["_realism_boost"] = True
         beat["_color_flatten"] = True
         log("    -> realism & color flatness boost (flatten color profile, soften facial expression)")
-    elif dtype in ("identity_drift", "artifact"):
+    elif dtype in ("identity_drift", "artifact", "transition", "continuity"):
         beat["_seed_jitter"] = beat.get("_seed_jitter", 0) + 1
-        log("    -> seed jitter for fresh structure while keeping the anchor")
+        log("    -> seed jitter for fresh structure while keeping the anchor (heals boundary mismatches)")
     return remedy
 
 
@@ -83,7 +83,9 @@ async def refine(beat_id: str, max_iters: int, mode: str, session_id: str | None
         media_tools.make_render_beat_stage(beat_id)(ctx)
         clip = state["beats"].get(beat_id, {})
         if clip.get("status") not in ("success", "mock"):
-            print(f"[render] failed: {clip}"); continue
+            print(f"[render] failed: {clip}")
+            beat["_seed_jitter"] = beat.get("_seed_jitter", 0) + 1
+            continue
         uri = clip["uri"]
 
         report = await qa.review_clip(uri, state, beat_id) if mode == "LIVE_MEDIA" else qa._mock_qa(state)

@@ -1,9 +1,14 @@
 import os
+import json
 from google import genai
 
 def test_gemini_sdk():
-    project_id = "gen-lang-client-0620387606"
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(os.getcwd(), "google-credentials.json")
+    cred_path = os.path.join(os.getcwd(), "google-credentials.json")
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = cred_path
+    
+    with open(cred_path, "r") as f:
+        creds = json.load(f)
+        project_id = creds.get("project_id")
     
     client = genai.Client(vertexai=True, project=project_id, location="us-central1")
     

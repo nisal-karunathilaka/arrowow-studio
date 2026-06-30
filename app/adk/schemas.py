@@ -36,6 +36,10 @@ class StrategyResponse(pydantic.BaseModel):
         default_factory=list,
         description="3-5 concrete product benefits the visuals must demonstrate (e.g. 'grippy "
                     "sole', 'flexible knit', 'all-day cushion'), drawn from the brief.")
+    soundtrack: str = pydantic.Field(
+        default="fast_electronic",
+        description="The background soundtrack category that matches the campaign tone "
+                    "(e.g., 'fast_electronic', 'hip_hop', 'serene_instrumental').")
 
 
 class ScriptResponse(pydantic.BaseModel):
@@ -90,6 +94,12 @@ class BeatPrompt(pydantic.BaseModel):
     seed_locked: bool
     prompt: str                # the assembled generation prompt (visuals realizing the brief beat)
     dialogue_or_vo: str        # spoken line (native) or voiceover (voiceover)
+    start_frame_prompt: str = pydantic.Field(
+        default="",
+        description="The visual prompt explicitly describing the STARTING frame for this beat.")
+    end_frame_prompt: str = pydantic.Field(
+        default="",
+        description="The visual prompt explicitly describing the ENDING frame for this beat. Must exactly match the start frame of the next beat.")
     product_action: str = pydantic.Field(
         default="",
         description="What the hero product does / how it is featured in this beat (e.g. 'sole grips "

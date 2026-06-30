@@ -172,6 +172,9 @@ async def _run_render(session: Session, mode: str, log: Logger) -> None:
     log("[render] synthesizing voiceover (Cloud TTS)…")
     media_tools.synthesize_voiceover(ctx)
 
+    log("[render] downloading background soundtrack…")
+    media_tools.download_soundtrack(ctx)
+
     # Healing pass — retry any failed beat once with a jittered seed.
     rendered = state.setdefault("beats", {})
     for b in beats:
@@ -190,7 +193,17 @@ async def _run_render(session: Session, mode: str, log: Logger) -> None:
 
 async def _run_qa(session: Session, mode: str, log: Logger) -> None:
     ctx = _ctx(session, mode, log)
-    await qa_mod.build_qa_agent().run(ctx)
+    from app.adk.improvement import AdversarialRefiner
+    
+    # Run the ProductionCriticLoop automatically so that UI/interactive runs do
+    # the closed-loop adversarial refinement to automatically resolve defects.
+    critic_loop = LoopAgent(
+        "ProductionCriticLoop",
+        [qa_mod.build_qa_agent(), AdversarialRefiner()],
+        max_iterations=3,
+        should_exit=lambda s: bool(s.get("_critic_exit")))
+    
+    await critic_loop.run(ctx)
     _record_spend(session.state, mode)
     session.state["metadata"]["current_stage"] = "qa"
     session.state["metadata"]["status"] = "complete"
@@ -277,8 +290,26 @@ def visual_review(state: dict) -> dict:
 
 def frame_review(state: dict) -> dict:
     rf = state.get("reference_frame", {})
-    uri = rf.get("uri")
-    return {"uri": uri, "status": rf.get("status"), "exists": _file_ok(uri)}
+    all_uris = rf.get("all_uris", [])
+    uri = rf.get("uri") if not all_uris else all_uris[0]
+    
+    # Retrieve the start/end frame URIs per beat from the planned beats
+    beats = state.get("beat_prompts", {}).get("beats", [])
+    beats_frames = []
+    for b in beats:
+        beats_frames.append({
+            "beat_id": b.get("beat_id"),
+            "start_uri": b.get("_start_frame_uri"),
+            "end_uri": b.get("_end_frame_uri"),
+        })
+
+    return {
+        "uri": uri,
+        "all_uris": all_uris,
+        "beats_frames": beats_frames,
+        "status": rf.get("status"),
+        "exists": _file_ok(uri)
+    }
 
 
 def render_review(state: dict) -> dict:

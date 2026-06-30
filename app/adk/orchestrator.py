@@ -54,7 +54,8 @@ class ArrowowDirector(BaseAgent):
             "MediaProductionParallel",
             [FunctionTool(f"render_beat:{b}", media_tools.make_render_beat_stage(b))
              for b in BEAT_IDS]
-            + [FunctionTool("synthesize_voiceover", media_tools.synthesize_voiceover)])
+            + [FunctionTool("synthesize_voiceover", media_tools.synthesize_voiceover)]
+            + [FunctionTool("download_soundtrack", media_tools.download_soundtrack)])
 
         critic_loop = LoopAgent(
             "ProductionCriticLoop",

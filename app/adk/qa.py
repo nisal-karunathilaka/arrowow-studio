@@ -41,7 +41,9 @@ def _brief_context(state: dict) -> str:
     beats = state.get("beat_prompts", {}).get("beats", [])
     beat_lines = "\n".join(
         f"  - {b.get('beat_id')}: {b.get('prompt','')[:160]} "
-        f"| product: {b.get('product_action','')} | text: {b.get('on_screen_text','')}"
+        f"| product: {b.get('product_action','')} | text: {b.get('on_screen_text','')}\n"
+        f"    [Boundary Start]: {b.get('start_frame_prompt', '')}\n"
+        f"    [Boundary End]: {b.get('end_frame_prompt', '')}"
         for b in beats)
     return (
         f"CAMPAIGN BRIEF: {brief.get('scenario','')}\n"

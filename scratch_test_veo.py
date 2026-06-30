@@ -16,8 +16,7 @@ def get_access_token():
     return credentials.token, credentials.project_id
 
 def test_veo_3_1():
-    token, default_project = get_access_token()
-    project_id = "gen-lang-client-0620387606"  # User's specific project
+    token, project_id = get_access_token()
     
     url = f"https://us-central1-aiplatform.googleapis.com/v1/projects/{project_id}/locations/us-central1/publishers/google/models/veo-3.1-generate-001:predictLongRunning"
     

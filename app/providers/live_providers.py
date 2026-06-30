@@ -31,10 +31,33 @@ class ImagenProvider:
                 
             client = genai.Client(vertexai=True, project=project_id, location="global")
             
-            response = client.models.generate_content(
-                model="gemini-3.1-flash-image",
-                contents=prompt
-            )
+            contents = [prompt]
+            if reference_image and os.path.exists(reference_image) and not reference_image.endswith("error.png"):
+                from PIL import Image
+                img = Image.open(reference_image)
+                contents.insert(0, img)
+            
+            import time
+            # Rate limit pacing: wait 15 seconds before every request to stay under 4/min quota
+            time.sleep(15)
+            
+            response = None
+            for attempt in range(4):
+                try:
+                    response = client.models.generate_content(
+                        model="gemini-3.1-flash-image",
+                        contents=contents
+                    )
+                    break
+                except Exception as ex:
+                    if "429" in str(ex) or "RESOURCE_EXHAUSTED" in str(ex):
+                        backoff = 20 * (attempt + 1)
+                        print(f"[ImagenProvider] 429 Quota Error on attempt {attempt+1}. Retrying in {backoff}s...")
+                        time.sleep(backoff)
+                        if attempt == 3:
+                            raise ex
+                    else:
+                        raise ex
             
             target_dir = output_dir or os.path.join(os.getcwd(), "output")
             os.makedirs(target_dir, exist_ok=True)
@@ -87,7 +110,7 @@ class GoogleTTSProvider:
             return {"uri": "error.mp3", "status": "failed"}
 
 class VeoVideoProvider:
-    def generate_video(self, prompt: str, reference_image: str = None, output_dir: str = None, seed: int = None, generate_audio: bool = True, aspect_ratio: str = "16:9") -> dict:
+    def generate_video(self, prompt: str, reference_image: str = None, last_frame: str = None, output_dir: str = None, seed: int = None, generate_audio: bool = True, aspect_ratio: str = "16:9") -> dict:
         print("[VeoVideoProvider] Generating video using Veo 3.1...")
         try:
             from google import genai
@@ -121,15 +144,25 @@ class VeoVideoProvider:
             
             # Upload reference image to GCS if available (Image-to-Video consistency)
             input_gcs_uri = None
-            if reference_image and os.path.exists(reference_image):
+            storage_client = storage.Client(credentials=credentials, project=project_id)
+            bucket = storage_client.bucket(bucket_name)
+
+            if reference_image and os.path.exists(reference_image) and not reference_image.endswith("error.png"):
                 print(f"[VeoVideoProvider] Uploading reference image {reference_image} to GCS...")
-                storage_client = storage.Client(credentials=credentials, project=project_id)
-                bucket = storage_client.bucket(bucket_name)
                 blob_name = f"inputs/{os.path.basename(reference_image)}"
                 blob = bucket.blob(blob_name)
                 blob.upload_from_filename(reference_image)
                 input_gcs_uri = f"gs://{bucket_name}/{blob_name}"
                 print(f"[VeoVideoProvider] Reference image uploaded: {input_gcs_uri}")
+                
+            last_gcs_uri = None
+            if last_frame and os.path.exists(last_frame) and not last_frame.endswith("error.png"):
+                print(f"[VeoVideoProvider] Uploading last_frame image {last_frame} to GCS...")
+                blob_name = f"inputs/last_{os.path.basename(last_frame)}"
+                blob = bucket.blob(blob_name)
+                blob.upload_from_filename(last_frame)
+                last_gcs_uri = f"gs://{bucket_name}/{blob_name}"
+                print(f"[VeoVideoProvider] Last frame uploaded: {last_gcs_uri}")
                 
             print("[VeoVideoProvider] Requesting video from Veo...")
             
@@ -147,22 +180,18 @@ class VeoVideoProvider:
             # Seed locking for character consistency
             if seed is not None:
                 config_params["seed"] = seed
-
-            if input_gcs_uri:
-                config_params["reference_images"] = [
-                    types.VideoGenerationReferenceImage(
-                        image=types.Image(gcs_uri=input_gcs_uri, mime_type="image/png"),
-                        reference_type="ASSET"
-                    )
-                ]
                 
-            # For Veo 3.1, if we are passing audio instructions in the prompt, we don't strictly need to pass an API parameter if the prompt is enough, but some versions of the SDK require generate_audio=True to enable the audio tracks. The google-genai package kwargs might support it. We'll pass it if the API supports it.
-            # But the user's REST payload showed "generateAudio": True inside parameters.
-            # We will just pass the prompt for now, as standard Veo 3.1 genai SDK implies audio generates from prompt.
+            if last_gcs_uri:
+                config_params["last_frame"] = types.Image(gcs_uri=last_gcs_uri, mime_type="image/png")
+                
+            input_image_obj = None
+            if input_gcs_uri:
+                input_image_obj = types.Image(gcs_uri=input_gcs_uri, mime_type="image/png")
                 
             operation = client.models.generate_videos(
                 model="veo-3.1-generate-001",
                 prompt=prompt,
+                image=input_image_obj,
                 config=types.GenerateVideosConfig(**config_params)
             )
             

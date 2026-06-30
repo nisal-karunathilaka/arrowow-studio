@@ -240,15 +240,24 @@ async def _live_shot_prompt(state: dict) -> dict:
         context + _hitl_suffix(state, "visual_plan"),
         schemas.BeatPromptsResponse, state=state)
 
-    # Deterministic guardrails: filter-bypass the generated text + enforce the delivery policy.
-    # Native talking-head (she speaks the line, Veo lip-syncs) on every beat with the person present
-    # — the character explains the product in her own voice (no TTS overlay, no captions).
+    # Deterministic guardrails: filter-bypass the generated text + enforce the hybrid delivery policy.
     result["reference_frame_prompt"] = prompts.apply_filter_bypass(
         result.get("reference_frame_prompt", ""))
     for b in result.get("beats", []):
         b["prompt"] = prompts.apply_filter_bypass(b.get("prompt", ""))
-        b["features_person"] = True
-        b["sync_mode"] = (schemas.SYNC_VOICEOVER if p.prefers_voiceover else schemas.SYNC_NATIVE)
+        bid = b.get("beat_id")
+        if bid in ("hook", "intro", "cta"):
+            b["sync_mode"] = schemas.SYNC_VOICEOVER if p.prefers_voiceover else schemas.SYNC_NATIVE
+            b["seed_locked"] = True
+            b["features_person"] = True
+        else: # action, proof
+            b["sync_mode"] = schemas.SYNC_VOICEOVER
+            b["seed_locked"] = False
+            if bid == "proof" and (b.get("camera") == "C3" or "macro" in b.get("camera_movement", "").lower() or not b.get("features_person", True)):
+                b["features_person"] = False
+                b["_prop_only"] = True
+            else:
+                b["features_person"] = b.get("features_person", True)
     return result
 
 

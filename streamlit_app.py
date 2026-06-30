@@ -324,10 +324,64 @@ def view_visual(conv, rp):
 
 
 def view_frame(conv, rp):
-    if rp["exists"]:
-        st.image(rp["uri"], caption="Canonical anchor frame (identity lock)", width=360)
+    import os
+    beats_frames = rp.get("beats_frames", [])
+    if beats_frames:
+        st.write("Sequential Keyframes (Start & End per Beat):")
+        for i, bf in enumerate(beats_frames):
+            beat_id = bf["beat_id"]
+            beat_name = beat_id.capitalize()
+            st.markdown(f"**Beat {i+1}: {beat_name} (Start -> End)**")
+            cols = st.columns(2)
+            
+            start_uri = bf["start_uri"]
+            end_uri = bf["end_uri"]
+            
+            if start_uri and os.path.exists(start_uri):
+                try:
+                    cols[0].image(start_uri, caption=f"{beat_name} Start", use_container_width=True)
+                except Exception as e:
+                    cols[0].error(f"Error loading start frame: {e}")
+            else:
+                cols[0].error(f"Start frame missing (API failure or not generated)")
+                
+            if end_uri and os.path.exists(end_uri):
+                try:
+                    cols[1].image(end_uri, caption=f"{beat_name} End", use_container_width=True)
+                except Exception as e:
+                    cols[1].error(f"Error loading end frame: {e}")
+            else:
+                cols[1].error(f"End frame missing (API failure or not generated)")
+    elif rp.get("all_uris") and len(rp["all_uris"]) == 6:
+        st.write("Sequential Keyframes (Start & End per Beat):")
+        all_uris = rp["all_uris"]
+        beats = ["Hook", "Intro", "Action", "Proof", "CTA"]
+        for i, beat_name in enumerate(beats):
+            st.markdown(f"**Beat {i+1}: {beat_name} (Start -> End)**")
+            cols = st.columns(2)
+            
+            if os.path.exists(all_uris[i]):
+                try:
+                    cols[0].image(all_uris[i], caption=f"{beat_name} Start", use_container_width=True)
+                except Exception as e:
+                    cols[0].error(f"Error loading start frame: {e}")
+            else:
+                cols[0].error(f"Start frame missing (API failure)")
+                
+            if os.path.exists(all_uris[i+1]):
+                try:
+                    cols[1].image(all_uris[i+1], caption=f"{beat_name} End", use_container_width=True)
+                except Exception as e:
+                    cols[1].error(f"Error loading end frame: {e}")
+            else:
+                cols[1].error(f"End frame missing (API failure)")
+    elif rp.get("exists"):
+        if os.path.exists(rp.get("uri")):
+            st.image(rp.get("uri"), caption="Canonical anchor frame (identity lock)", width=360)
+        else:
+            st.error("Anchor frame missing")
     elif conv["config"]["mode"] == "DRY_RUN":
-        st.info("🧪 Mock mode — no image file is generated. Switch to **Live** to render the real anchor frame.")
+        st.info("🧪 Mock mode — no image file is generated. Switch to **Live** to render the real anchor frames.")
     else:
         st.warning(f"Frame not available (status: {rp.get('status')}).")
 

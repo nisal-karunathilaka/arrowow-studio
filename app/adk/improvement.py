@@ -30,7 +30,9 @@ class DefectRemedyKB:
         "vocal_audio": ("regenerate the voice with the character's exact voice profile "
                         "(Australian accent, natural breaths); slow the pace; remove robotic flatness"),
         "transition": ("match the end posture of the previous beat to the start of this one; "
-                       "apply a motion-masked whip-pan or a short xfade to hide the seam"),
+                       "Ensure the start_frame_prompt exactly matches the ending pose of the previous beat, "
+                       "and the end_frame_prompt sets up the next beat. Jitter the seed and regenerate to force "
+                       "better frame alignment. apply a motion-masked whip-pan or a short xfade to hide the seam"),
         "soundtrack": ("remove any music; keep only natural room tone; normalize dialogue to "
                        "broadcast loudness (~-14 LUFS)"),
         "hyperrealism": ("strengthen realism: real skin pores and texture, handheld micro-shake, "
@@ -125,6 +127,12 @@ class AdversarialRefiner(BaseAgent):
         beats = ctx.state.get("beat_prompts", {}).get("beats", [])
         target = next((b for b in beats if b.get("beat_id") == seg), None)
         if target is not None:
+            # If the beat previously failed, always jitter the seed to try and bypass the filter
+            previous_failed = ctx.state.get("beats", {}).get(seg, {}).get("status") == "failed"
+            if previous_failed or dtype == "brief_adherence":
+                target["_seed_jitter"] = target.get("_seed_jitter", 0) + 1
+                ctx.log(f"    [AdversarialRefiner] beat {seg} previously failed or missing -> incrementing seed jitter to {target['_seed_jitter']}")
+
             if dtype in ("lip_sync", "vocal_audio"):
                 if target.get("sync_mode") == "native":
                     target["sync_mode"] = "voiceover"
@@ -133,7 +141,7 @@ class AdversarialRefiner(BaseAgent):
             elif dtype in ("hyperrealism", "color"):
                 target["_realism_boost"] = True
                 target["_color_flatten"] = True
-            elif dtype in ("artifact", "identity_drift"):
+            elif dtype in ("artifact", "identity_drift", "transition", "continuity"):
                 target["_seed_jitter"] = target.get("_seed_jitter", 0) + 1
             media_tools.make_render_beat_stage(seg)(ctx)  # re-render the single beat
         else:
