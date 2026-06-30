@@ -146,6 +146,10 @@ class VeoVideoProvider:
             input_gcs_uri = None
             storage_client = storage.Client(credentials=credentials, project=project_id)
             bucket = storage_client.bucket(bucket_name)
+            if not bucket.exists():
+                print(f"[VeoVideoProvider] GCS Bucket {bucket_name} not found. Creating bucket...")
+                bucket = storage_client.create_bucket(bucket_name, location="us-central1")
+
 
             if reference_image and os.path.exists(reference_image) and not reference_image.endswith("error.png"):
                 print(f"[VeoVideoProvider] Uploading reference image {reference_image} to GCS...")
