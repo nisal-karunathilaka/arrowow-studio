@@ -1,0 +1,13 @@
+# Arrowow Studio — ADK orchestration dependencies (build Phase 6 / deploy)
+# The Phase 1 scaffold runs on pydantic alone (interim core.py). Install these when
+# migrating core.py to real Google ADK and wiring live backends.
+
+google-adk>=1.0.0            # multi-agent orchestration (Sequential/Loop/Parallel, LlmAgent, FunctionTool)
+google-genai>=2.8.0          # Gemini + Veo + Imagen (Vertex AI)
+google-cloud-aiplatform>=1.155.0
+google-cloud-texttospeech>=2.36.0
+google-cloud-storage>=3.11.0
+google-cloud-firestore>=2.16.0   # durable SessionService backend (Cloud Run)
+pydantic>=2.11
+# google-antigravity>=0.1.1  # optional: retain for a tool-using research/asset sub-agent
+opencv-python-headless
