@@ -1,234 +1,345 @@
-import os
-import json
-import uuid
-from google.cloud import texttospeech
-import vertexai
-from vertexai.preview.vision_models import ImageGenerationModel
+"""
+live_providers.py — Arrowow Studio production media providers.
 
-# Setup Google Cloud Authentication
-cred_path = os.path.join(os.getcwd(), "google-credentials.json")
-if os.path.exists(cred_path):
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = cred_path
-    
-    # Initialize Vertex AI automatically with the project ID from the JSON
-    with open(cred_path, "r") as f:
-        creds = json.load(f)
-        project_id = creds.get("project_id")
-        if project_id:
-            vertexai.init(project=project_id, location="us-central1")
+All providers load credentials from st.secrets["gcp_service_account"] first
+(Streamlit Community Cloud), then fall back to the local google-credentials.json
+file (local dev). No credentials are ever hardcoded.
+
+Outputs (images, videos, audio) are uploaded to GCS and returned as signed URLs
+so they are accessible from the Streamlit UI without a persistent local disk.
+"""
+from __future__ import annotations
+
+import io
+import json
+import os
+import time
+import uuid
+import datetime
+import tempfile
+
+# ---------------------------------------------------------------------------
+# Credential helpers — shared by all providers
+# ---------------------------------------------------------------------------
+
+_SCOPES = ["https://www.googleapis.com/auth/cloud-platform"]
+
+
+def _load_credentials():
+    """Return (project_id, google.oauth2.service_account.Credentials).
+
+    Priority:
+      1. st.secrets["gcp_service_account"]  — Streamlit Community Cloud
+      2. google-credentials.json in cwd     — local dev
+    """
+    from google.oauth2 import service_account
+
+    # 1. Streamlit secrets
+    try:
+        import streamlit as st
+        if "gcp_service_account" in st.secrets:
+            info = dict(st.secrets["gcp_service_account"])
+            creds = service_account.Credentials.from_service_account_info(
+                info, scopes=_SCOPES)
+            return info.get("project_id"), creds
+    except Exception:
+        pass
+
+    # 2. Local credentials file
+    cred_path = os.path.join(os.getcwd(), "google-credentials.json")
+    if os.path.exists(cred_path):
+        creds = service_account.Credentials.from_service_account_file(
+            cred_path, scopes=_SCOPES)
+        with open(cred_path) as f:
+            info = json.load(f)
+        return info.get("project_id"), creds
+
+    raise FileNotFoundError(
+        "No GCP credentials found. Set st.secrets['gcp_service_account'] "
+        "(Streamlit Cloud) or place google-credentials.json in the working dir."
+    )
+
+
+def _bucket_name(project_id: str) -> str:
+    """Derive the GCS bucket name from the project ID."""
+    # Allow override via st.secrets or env var for flexibility
+    try:
+        import streamlit as st
+        b = st.secrets.get("app", {}).get("gcs_bucket")
+        if b:
+            return b
+    except Exception:
+        pass
+    env = os.environ.get("GCS_BUCKET")
+    if env:
+        return env
+    return f"arrowow-videos-{project_id}"
+
+
+def _signed_url(bucket, blob_name: str, expiry_hours: int = 2) -> str:
+    """Return a v4 signed URL for a blob, valid for *expiry_hours*."""
+    from google.cloud import storage  # noqa: F401
+    blob = bucket.blob(blob_name)
+    return blob.generate_signed_url(
+        version="v4",
+        expiration=datetime.timedelta(hours=expiry_hours),
+        method="GET",
+    )
+
+
+def _ensure_bucket(storage_client, bucket_name: str, project_id: str):
+    """Return the bucket, creating it in us-central1 if it doesn't exist."""
+    from google.cloud.exceptions import NotFound, Conflict
+    bucket = storage_client.bucket(bucket_name)
+    try:
+        storage_client.get_bucket(bucket_name)
+    except NotFound:
+        try:
+            new_bucket = storage_client.create_bucket(
+                bucket_name, location="us-central1", project=project_id)
+            print(f"[GCS] Created bucket gs://{bucket_name}")
+            return new_bucket
+        except Conflict:
+            pass  # Another process created it
+    return bucket
+
+
+def _download_gcs_url_to_temp(url: str, suffix: str = ".png") -> str:
+    """Download an https:// GCS signed URL to a NamedTemporaryFile and return its path."""
+    import urllib.request
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+    urllib.request.urlretrieve(url, tmp.name)
+    return tmp.name
+
+
+# ---------------------------------------------------------------------------
+# upload_file_to_gcs — used by mock mode in media_tools.py
+# ---------------------------------------------------------------------------
+
+def upload_file_to_gcs(local_path: str, blob_name: str) -> str:
+    """Upload *local_path* to GCS and return a signed URL.
+
+    Used by DRY_RUN / LLM_ONLY mock mode to make demo assets accessible from
+    the Streamlit UI without relying on local disk.
+    """
+    from google.cloud import storage
+    project_id, creds = _load_credentials()
+    storage_client = storage.Client(credentials=creds, project=project_id)
+    bkt = _ensure_bucket(storage_client, _bucket_name(project_id), project_id)
+    blob = bkt.blob(blob_name)
+    blob.upload_from_filename(local_path)
+    return _signed_url(bkt, blob_name)
+
+
+# ---------------------------------------------------------------------------
+# ImagenProvider — Gemini image generation
+# ---------------------------------------------------------------------------
 
 class ImagenProvider:
-    def generate_image(self, prompt: str, reference_image: str, output_dir: str = None) -> dict:
-        print(f"[ImagenProvider] Generating image with Gemini 3.1 Flash Image...")
+    def generate_image(self, prompt: str, reference_image: str = None,
+                       output_dir: str = None) -> dict:
+        print("[ImagenProvider] Generating image with Gemini Flash Image…")
         try:
             from google import genai
-            import json
-            
-            cred_path = os.path.join(os.getcwd(), "google-credentials.json")
-            with open(cred_path, "r") as f:
-                creds = json.load(f)
-                project_id = creds.get("project_id")
-                
-            client = genai.Client(vertexai=True, project=project_id, location="global")
-            
+            from google.cloud import storage
+
+            project_id, creds = _load_credentials()
+            client = genai.Client(vertexai=True, project=project_id,
+                                  location="global", credentials=creds)
+
             contents = [prompt]
-            if reference_image and os.path.exists(reference_image) and not reference_image.endswith("error.png"):
-                from PIL import Image
-                img = Image.open(reference_image)
-                contents.insert(0, img)
-            
-            import time
-            # Rate limit pacing: wait 15 seconds before every request to stay under 4/min quota
+
+            # reference_image may be a local path or a signed GCS https:// URL
+            if reference_image and not reference_image.endswith("error.png"):
+                local_path = None
+                if reference_image.startswith("http://") or reference_image.startswith("https://"):
+                    try:
+                        local_path = _download_gcs_url_to_temp(reference_image, suffix=".png")
+                    except Exception as dl_err:
+                        print(f"[ImagenProvider] Could not download reference image: {dl_err}")
+                elif os.path.exists(reference_image):
+                    local_path = reference_image
+
+                if local_path:
+                    from PIL import Image as PILImage
+                    img = PILImage.open(local_path)
+                    contents.insert(0, img)
+
+            # Rate-limit pacing (4 RPM quota)
             time.sleep(15)
-            
+
             response = None
             for attempt in range(4):
                 try:
                     response = client.models.generate_content(
                         model="gemini-3.1-flash-image",
-                        contents=contents
+                        contents=contents,
                     )
                     break
                 except Exception as ex:
                     if "429" in str(ex) or "RESOURCE_EXHAUSTED" in str(ex):
                         backoff = 20 * (attempt + 1)
-                        print(f"[ImagenProvider] 429 Quota Error on attempt {attempt+1}. Retrying in {backoff}s...")
+                        print(f"[ImagenProvider] 429 — retry in {backoff}s…")
                         time.sleep(backoff)
                         if attempt == 3:
-                            raise ex
+                            raise
                     else:
-                        raise ex
-            
-            target_dir = output_dir or os.path.join(os.getcwd(), "output")
-            os.makedirs(target_dir, exist_ok=True)
-            output_path = os.path.join(target_dir, f"sienna_frame_{uuid.uuid4().hex[:6]}.png")
-            
-            # Extract image bytes from inline data
+                        raise
+
+            # Extract inline image bytes and upload to GCS → return signed URL
+            storage_client = storage.Client(credentials=creds, project=project_id)
+            bkt = _ensure_bucket(storage_client, _bucket_name(project_id), project_id)
+            blob_name = f"images/sienna_frame_{uuid.uuid4().hex[:6]}.png"
+
             for part in response.candidates[0].content.parts:
                 if part.inline_data:
-                    with open(output_path, "wb") as f:
-                        f.write(part.inline_data.data)
-                    break
-                    
-            return {"uri": output_path, "status": "success"}
+                    blob = bkt.blob(blob_name)
+                    blob.upload_from_string(part.inline_data.data,
+                                            content_type="image/png")
+                    url = _signed_url(bkt, blob_name)
+                    return {"uri": url, "status": "success"}
+
+            raise ValueError("No inline image data in Gemini response")
+
         except Exception as e:
             print(f"[ImagenProvider] Error: {e}")
             return {"uri": "error.png", "status": "failed"}
 
+
+# ---------------------------------------------------------------------------
+# GoogleTTSProvider — Cloud Text-to-Speech
+# ---------------------------------------------------------------------------
+
 class GoogleTTSProvider:
-    def generate_audio(self, text: str, voice_id: str = "en-US-Journey-F", output_dir: str = None) -> dict:
-        print(f"[GoogleTTSProvider] Generating audio with voice {voice_id}...")
+    def generate_audio(self, text: str, voice_id: str = "en-US-Journey-F",
+                       output_dir: str = None) -> dict:
+        print(f"[GoogleTTSProvider] Synthesizing audio with voice {voice_id}…")
         try:
-            client = texttospeech.TextToSpeechClient()
-            synthesis_input = texttospeech.SynthesisInput(text=text)
-            
-            # Parse language code from voice_id (e.g. en-AU-Neural2-A -> en-AU)
+            from google.cloud import texttospeech, storage
+
+            project_id, creds = _load_credentials()
+            tts_client = texttospeech.TextToSpeechClient(credentials=creds)
+
             lang_code = "-".join(voice_id.split("-")[:2]) if "-" in voice_id else "en-US"
+            synthesis_input = texttospeech.SynthesisInput(text=text)
             voice = texttospeech.VoiceSelectionParams(
-                language_code=lang_code,
-                name=voice_id
-            )
-            
+                language_code=lang_code, name=voice_id)
             audio_config = texttospeech.AudioConfig(
-                audio_encoding=texttospeech.AudioEncoding.MP3
-            )
-            
-            response = client.synthesize_speech(
-                input=synthesis_input, voice=voice, audio_config=audio_config
-            )
-            
-            target_dir = output_dir or os.path.join(os.getcwd(), "output")
-            os.makedirs(target_dir, exist_ok=True)
-            output_path = os.path.join(target_dir, f"voiceover_{uuid.uuid4().hex[:6]}.mp3")
-            
-            with open(output_path, "wb") as out:
-                out.write(response.audio_content)
-                
-            return {"uri": output_path, "status": "success"}
+                audio_encoding=texttospeech.AudioEncoding.MP3)
+
+            response = tts_client.synthesize_speech(
+                input=synthesis_input, voice=voice, audio_config=audio_config)
+
+            # Upload MP3 to GCS → return signed URL
+            storage_client = storage.Client(credentials=creds, project=project_id)
+            bkt = _ensure_bucket(storage_client, _bucket_name(project_id), project_id)
+            blob_name = f"audio/voiceover_{uuid.uuid4().hex[:6]}.mp3"
+            blob = bkt.blob(blob_name)
+            blob.upload_from_string(response.audio_content, content_type="audio/mpeg")
+            url = _signed_url(bkt, blob_name)
+            return {"uri": url, "status": "success"}
+
         except Exception as e:
             print(f"[GoogleTTSProvider] Error: {e}")
             return {"uri": "error.mp3", "status": "failed"}
 
+
+# ---------------------------------------------------------------------------
+# VeoVideoProvider — Veo 3.1 video generation
+# ---------------------------------------------------------------------------
+
 class VeoVideoProvider:
-    def generate_video(self, prompt: str, reference_image: str = None, last_frame: str = None, output_dir: str = None, seed: int = None, generate_audio: bool = True, aspect_ratio: str = "16:9") -> dict:
-        print("[VeoVideoProvider] Generating video using Veo 3.1...")
+    def generate_video(self, prompt: str, reference_image: str = None,
+                       last_frame: str = None, output_dir: str = None,
+                       seed: int = None, generate_audio: bool = True,
+                       aspect_ratio: str = "16:9") -> dict:
+        print("[VeoVideoProvider] Requesting video from Veo 3.1…")
         try:
             from google import genai
             from google.genai import types
-            from google.oauth2 import service_account
             from google.cloud import storage
-            import time
-            
-            cred_path = os.path.join(os.getcwd(), "google-credentials.json")
-            if not os.path.exists(cred_path):
-                raise FileNotFoundError("google-credentials.json not found in root directory")
-                
-            with open(cred_path, "r") as f:
-                creds = json.load(f)
-                project_id = creds.get("project_id")
-                
-            scopes = ["https://www.googleapis.com/auth/cloud-platform"]
-            credentials = service_account.Credentials.from_service_account_file(
-                cred_path, scopes=scopes
-            )
-            
-            client = genai.Client(
-                vertexai=True,
-                project=project_id,
-                location="us-central1",
-                credentials=credentials
-            )
-            
-            bucket_name = f"arrowow-videos-{project_id}"
-            output_gcs_uri = f"gs://{bucket_name}/renders/"
-            
-            # Upload reference image to GCS if available (Image-to-Video consistency)
-            input_gcs_uri = None
-            storage_client = storage.Client(credentials=credentials, project=project_id)
-            bucket = storage_client.bucket(bucket_name)
 
-            if reference_image and os.path.exists(reference_image) and not reference_image.endswith("error.png"):
-                print(f"[VeoVideoProvider] Uploading reference image {reference_image} to GCS...")
-                blob_name = f"inputs/{os.path.basename(reference_image)}"
-                blob = bucket.blob(blob_name)
-                blob.upload_from_filename(reference_image)
-                input_gcs_uri = f"gs://{bucket_name}/{blob_name}"
-                print(f"[VeoVideoProvider] Reference image uploaded: {input_gcs_uri}")
-                
-            last_gcs_uri = None
-            if last_frame and os.path.exists(last_frame) and not last_frame.endswith("error.png"):
-                print(f"[VeoVideoProvider] Uploading last_frame image {last_frame} to GCS...")
-                blob_name = f"inputs/last_{os.path.basename(last_frame)}"
-                blob = bucket.blob(blob_name)
-                blob.upload_from_filename(last_frame)
-                last_gcs_uri = f"gs://{bucket_name}/{blob_name}"
-                print(f"[VeoVideoProvider] Last frame uploaded: {last_gcs_uri}")
-                
-            print("[VeoVideoProvider] Requesting video from Veo...")
-            
+            project_id, creds = _load_credentials()
+            client = genai.Client(vertexai=True, project=project_id,
+                                  location="us-central1", credentials=creds)
+
+            storage_client = storage.Client(credentials=creds, project=project_id)
+            bucket_name = _bucket_name(project_id)
+            bkt = _ensure_bucket(storage_client, bucket_name, project_id)
+            output_gcs_uri = f"gs://{bucket_name}/renders/"
+
+            def _upload_image_for_veo(img_src: str, prefix: str) -> str | None:
+                """Upload a local path or signed URL to GCS input/ and return gs:// URI."""
+                if not img_src or img_src.endswith("error.png"):
+                    return None
+                local = None
+                if img_src.startswith("http://") or img_src.startswith("https://"):
+                    try:
+                        local = _download_gcs_url_to_temp(img_src, suffix=".png")
+                    except Exception as dl_err:
+                        print(f"[VeoVideoProvider] Could not download {prefix}: {dl_err}")
+                        return None
+                elif os.path.exists(img_src):
+                    local = img_src
+                else:
+                    return None
+
+                blob_name = f"inputs/{prefix}_{os.path.basename(local)}"
+                blob = bkt.blob(blob_name)
+                blob.upload_from_filename(local)
+                return f"gs://{bucket_name}/{blob_name}"
+
+            input_gcs_uri = _upload_image_for_veo(reference_image, "ref")
+            last_gcs_uri = _upload_image_for_veo(last_frame, "last")
+
             config_params = {
                 "output_gcs_uri": output_gcs_uri,
                 "aspect_ratio": aspect_ratio if aspect_ratio in ("16:9", "9:16") else "16:9",
                 "person_generation": "ALLOW_ADULT",
-                # For voiceover beats, disable Veo audio so it doesn't add speech/lip movement.
-                # The TTS voiceover is overlaid in post-production by the compositor.
                 "generate_audio": generate_audio,
-                # Veo 3.1 caps at 8 seconds for BOTH Text-to-Video [4,6,8] and Image-to-Video [8]
                 "duration_seconds": 8,
             }
-            
-            # Seed locking for character consistency
             if seed is not None:
                 config_params["seed"] = seed
-                
             if last_gcs_uri:
-                config_params["last_frame"] = types.Image(gcs_uri=last_gcs_uri, mime_type="image/png")
-                
+                config_params["last_frame"] = types.Image(
+                    gcs_uri=last_gcs_uri, mime_type="image/png")
+
             input_image_obj = None
             if input_gcs_uri:
-                input_image_obj = types.Image(gcs_uri=input_gcs_uri, mime_type="image/png")
-                
+                input_image_obj = types.Image(
+                    gcs_uri=input_gcs_uri, mime_type="image/png")
+
             operation = client.models.generate_videos(
                 model="veo-3.1-generate-001",
                 prompt=prompt,
                 image=input_image_obj,
-                config=types.GenerateVideosConfig(**config_params)
+                config=types.GenerateVideosConfig(**config_params),
             )
-            
-            print(f"[VeoVideoProvider] Veo operation started: {operation.name}")
-            print("Waiting for video rendering (takes 1-3 minutes)...")
-            
+
+            print(f"[VeoVideoProvider] Operation started: {operation.name}")
             while not operation.done:
                 print(".", end="", flush=True)
                 time.sleep(10)
                 operation = client.operations.get(operation)
-                
             print("")
-            if operation.error:
-                raise Exception(f"Veo Server Error: {operation.error}")
-                
-            if not operation.response or not operation.response.generated_videos:
-                raise Exception(f"Veo rejected the prompt or returned an empty response. Likely a safety filter trigger. Response: {operation.response}")
-                
-            generated_video = operation.response.generated_videos[0]
-            gcs_path = generated_video.video.uri
-            print(f"[VeoVideoProvider] Render successful! GCS URI: {gcs_path}")
-            
-            # Download the final video locally
-            target_dir = output_dir or os.path.join(os.getcwd(), "output")
-            os.makedirs(target_dir, exist_ok=True)
-            output_path = os.path.join(target_dir, f"veo_final_{uuid.uuid4().hex[:6]}.mp4")
-            
-            print(f"[VeoVideoProvider] Downloading video to local path: {output_path}")
-            storage_client = storage.Client(credentials=credentials, project=project_id)
-            relative_path = gcs_path.replace(f"gs://{bucket_name}/", "")
-            bucket = storage_client.bucket(bucket_name)
-            blob = bucket.blob(relative_path)
-            blob.download_to_filename(output_path)
-            
-            return {"uri": output_path, "status": "success"}
-            
-        except Exception as e:
-            print(f"[VeoVideoProvider] Live video generation failed: {e}")
-            return {"uri": "error.mp4", "status": "failed"}
 
+            if operation.error:
+                raise Exception(f"Veo error: {operation.error}")
+            if not operation.response or not operation.response.generated_videos:
+                raise Exception(
+                    "Veo returned an empty response — likely a safety filter block.")
+
+            # The rendered video is already in GCS. Generate a signed URL directly —
+            # no local download needed (Streamlit Cloud has no persistent disk).
+            gcs_path = operation.response.generated_videos[0].video.uri
+            # gcs_path: gs://<bucket>/renders/<file>.mp4
+            relative_path = gcs_path.replace(f"gs://{bucket_name}/", "")
+            url = _signed_url(bkt, relative_path, expiry_hours=2)
+
+            print(f"[VeoVideoProvider] Success → {gcs_path}")
+            return {"uri": url, "status": "success"}
+
+        except Exception as e:
+            print(f"[VeoVideoProvider] Failed: {e}")
+            return {"uri": "error.mp4", "status": "failed"}

@@ -215,21 +215,43 @@ def generate_reference_frame(ctx: InvocationContext) -> dict:
 # Beat render (Veo 3.1)
 # ---------------------------------------------------------------------------
 def extract_sharpest_tail_frame(video_path: str, num_frames: int = 15) -> str | None:
-    if not os.path.exists(video_path) or not video_path.endswith('.mp4'):
+    """Extract the sharpest (highest Laplacian variance) tail frame from a video.
+
+    *video_path* may be a local path or an https:// GCS signed URL.
+    Returns a signed GCS URL for the extracted PNG, or None on failure.
+    """
+    import tempfile
+
+    # If it's a signed URL, download to a temp file first
+    local_video = video_path
+    _temp_video = None
+    if video_path.startswith("http://") or video_path.startswith("https://"):
+        try:
+            import urllib.request
+            _temp_video = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
+            urllib.request.urlretrieve(video_path, _temp_video.name)
+            local_video = _temp_video.name
+        except Exception as dl_err:
+            print(f"[extract_tail] Could not download video for tail extraction: {dl_err}")
+            return None
+
+    if not local_video or not os.path.exists(local_video):
         return None
+
     try:
         import cv2
-        cap = cv2.VideoCapture(video_path)
+        cap = cv2.VideoCapture(local_video)
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
         if total_frames <= 0:
+            cap.release()
             return None
-        
+
         start_frame = max(0, total_frames - num_frames)
         cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-        
+
         best_frame = None
         max_variance = -1.0
-        
+
         while True:
             ret, frame = cap.read()
             if not ret:
@@ -239,18 +261,36 @@ def extract_sharpest_tail_frame(video_path: str, num_frames: int = 15) -> str | 
             if variance > max_variance:
                 max_variance = variance
                 best_frame = frame
-                
+
         cap.release()
-        
-        if best_frame is not None:
-            out_path = video_path.replace('.mp4', '_tail.png')
-            cv2.imwrite(out_path, best_frame)
+
+        if best_frame is None:
+            return None
+
+        # Write PNG to a temp file
+        tmp_png = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+        import cv2 as _cv2
+        _cv2.imwrite(tmp_png.name, best_frame)
+
+        # Upload to GCS and return a signed URL
+        try:
+            from app.providers.live_providers import upload_file_to_gcs
+            import uuid as _uuid
+            blob_name = f"tails/tail_{_uuid.uuid4().hex[:8]}.png"
+            return upload_file_to_gcs(tmp_png.name, blob_name)
+        except Exception as up_err:
+            print(f"[extract_tail] GCS upload failed, returning local path: {up_err}")
+            # Fallback to local path (works for local dev)
+            out_path = local_video.replace(".mp4", "_tail.png")
+            import shutil
+            shutil.copy(tmp_png.name, out_path)
             return out_path
-            
+
     except Exception as e:
-        print(f"Error extracting tail frame: {e}")
-        
+        print(f"[extract_tail] Error: {e}")
+
     return None
+
 
 
 def make_render_beat_stage(beat_id: str):
