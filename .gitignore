@@ -1,8 +1,11 @@
-# Secrets — NEVER commit credentials (rotate the key already in history: see docs/claude/current_status.md §8)
+# Secrets — NEVER commit credentials
 google-credentials.json
 *.key
 *.pem
 .env
+
+# Streamlit secrets (real credentials — use secrets.toml.template as reference)
+.streamlit/secrets.toml
 
 # Python
 __pycache__/
