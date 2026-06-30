@@ -192,10 +192,15 @@ def sidebar():
         st.divider()
         st.markdown("**Mode** (for new videos)")
         mode_label = st.radio(
-            "mode", ["🧪 Mock  ·  free, instant", "🛰️ Live  ·  real render (paid)"],
-            index=0 if st.session_state.mode == "DRY_RUN" else 1,
+            "mode", ["🧪 Mock  ·  free, instant", "🧠 Live Creative  ·  scripts/story (free)", "🛰️ Live Media  ·  real render (paid)"],
+            index=0 if st.session_state.mode == "DRY_RUN" else (1 if st.session_state.mode == "LLM_ONLY" else 2),
             label_visibility="collapsed")
-        st.session_state.mode = "DRY_RUN" if mode_label.startswith("🧪") else "LIVE_MEDIA"
+        if mode_label.startswith("🧪"):
+            st.session_state.mode = "DRY_RUN"
+        elif mode_label.startswith("🧠"):
+            st.session_state.mode = "LLM_ONLY"
+        else:
+            st.session_state.mode = "LIVE_MEDIA"
         tracker = pipeline.DevSpendTracker()
         st.caption(f"Dev budget remaining: **${tracker.remaining():.2f} / ${tracker.CEILING_USD:.0f}**")
 
@@ -242,8 +247,16 @@ def composer():
         brief = st.session_state.pop("_prefill")
 
     mode = st.session_state.mode
-    est = "free · instant" if mode == "DRY_RUN" else f"≈ ${pipeline.PROJECTED_RENDER_USD:.2f} live render"
-    st.caption(f"Mode: **{'Mock' if mode=='DRY_RUN' else 'Live'}**  ·  {est}")
+    if mode == "DRY_RUN":
+        mode_name = "Mock"
+        est = "free · instant"
+    elif mode == "LLM_ONLY":
+        mode_name = "Live Creative"
+        est = "live text/plan · free"
+    else:
+        mode_name = "Live Media"
+        est = f"≈ ${pipeline.PROJECTED_RENDER_USD:.2f} live render"
+    st.caption(f"Mode: **{mode_name}**  ·  {est}")
 
     if st.button("✨  Generate video", type="primary", disabled=not brief.strip()):
         config = {
@@ -380,8 +393,8 @@ def view_frame(conv, rp):
             st.image(rp.get("uri"), caption="Canonical anchor frame (identity lock)", width=360)
         else:
             st.error("Anchor frame missing")
-    elif conv["config"]["mode"] == "DRY_RUN":
-        st.info("🧪 Mock mode — no image file is generated. Switch to **Live** to render the real anchor frames.")
+    elif conv["config"]["mode"] in ("DRY_RUN", "LLM_ONLY"):
+        st.info("🧪 Mock / Creative mode — no image file is generated. Switch to **Live Media** to render real anchor frames.")
     else:
         st.warning(f"Frame not available (status: {rp.get('status')}).")
 
@@ -401,9 +414,9 @@ def view_render(conv, rp):
         st.video(uri)
         cap = " · 📝 captions burned-in" if rp.get("captions_burned") else ""
         st.caption(f"Master cut · {rp.get('duration_s','?')}s · {conv['config']['aspect_ratio']}{cap}")
-    elif conv["config"]["mode"] == "DRY_RUN":
-        st.info("🧪 Mock mode — the pipeline ran end-to-end but produced placeholder clips "
-                "(no real video). Switch to **Live** mode to render a playable master.")
+    elif conv["config"]["mode"] in ("DRY_RUN", "LLM_ONLY"):
+        st.info("🧪 Mock / Creative mode — the pipeline ran end-to-end but produced placeholder clips "
+                "(no real video). Switch to **Live Media** mode to render a playable master.")
     elif rp.get("status") == "halted_budget":
         st.error("Render halted — it would exceed the $100 dev-spend ceiling.")
     else:
@@ -537,9 +550,14 @@ def render_gate(conv):
                        f"budget remaining **${remaining:.2f}**")
             if would:
                 st.error(f"This render would exceed the ${tracker.CEILING_USD:.0f} dev-spend ceiling. "
-                         "Switch to Mock mode or raise the ceiling.")
+                         "Switch to Mock or Live Creative mode, or raise the ceiling.")
             if st.button("🎬 Render video (live)", type="primary", disabled=would,
                          key=f"rndr_{conv['id']}"):
+                start_render(conv)
+                st.rerun()
+        elif mode == "LLM_ONLY":
+            st.caption("🧠 Live Creative mode · free, live script/story, placeholder clips.")
+            if st.button("🎬 Run render (mock)", type="primary", key=f"rndr_{conv['id']}"):
                 start_render(conv)
                 st.rerun()
         else:
@@ -555,11 +573,12 @@ def render_gate(conv):
 def conversation(conv):
     cfg = conv["config"]
     st.markdown(f"## {conv['title']}")
+    mode_chip = 'Mock' if cfg['mode']=='DRY_RUN' else ('Live Creative' if cfg['mode']=='LLM_ONLY' else 'Live Media')
     st.markdown(
         f"<span class='aw-chip'>{brands.get_brand(cfg['brand_id']).brand_name}</span>"
         f"<span class='aw-chip aw-chip-muted'>{cfg['platform']}</span>"
         f"<span class='aw-chip aw-chip-muted'>{cfg['aspect_ratio']}</span>"
-        f"<span class='aw-chip aw-chip-muted'>{'Mock' if cfg['mode']=='DRY_RUN' else 'Live'} mode</span>",
+        f"<span class='aw-chip aw-chip-muted'>{mode_chip} mode</span>",
         unsafe_allow_html=True)
     st.markdown(f"<div class='aw-brief'>{cfg['user_brief']}</div>", unsafe_allow_html=True)
     st.write("")
