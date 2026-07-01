@@ -24,40 +24,75 @@ import tempfile
 
 _SCOPES = ["https://www.googleapis.com/auth/cloud-platform"]
 
+# Process-global credential cache. IMPORTANT: st.secrets is only reliably readable on the
+# Streamlit MAIN thread, but renders run in a background thread (jobs.py). So we cache the
+# resolved (project_id, creds) here — warm it once on the main thread (see warm_credentials /
+# start_shot_bg) and every background worker reuses this cache without touching st.secrets.
+_CREDS_CACHE = None
 
-def _load_credentials():
-    """Return (project_id, google.oauth2.service_account.Credentials).
 
-    Priority:
-      1. st.secrets["gcp_service_account"]  — Streamlit Community Cloud
-      2. google-credentials.json in cwd     — local dev
-    """
-    from google.oauth2 import service_account
-
-    # 1. Streamlit secrets
+def _read_secret_info():
+    """Return the service-account info dict from st.secrets, or None. Repairs the very common
+    Streamlit-Cloud gotcha where the PEM private_key is stored with escaped '\\n' sequences."""
     try:
         import streamlit as st
         if "gcp_service_account" in st.secrets:
             info = dict(st.secrets["gcp_service_account"])
-            creds = service_account.Credentials.from_service_account_info(
-                info, scopes=_SCOPES)
-            return info.get("project_id"), creds
-    except Exception:
-        pass
+            pk = info.get("private_key", "")
+            # If the key came in with literal backslash-n instead of real newlines, fix it —
+            # otherwise from_service_account_info raises "Could not deserialize key data".
+            if pk and "\\n" in pk and "-----BEGIN" in pk:
+                info["private_key"] = pk.replace("\\n", "\n")
+            return info
+    except Exception as e:
+        print(f"[creds] st.secrets not accessible ({e.__class__.__name__}: {e})")
+    return None
 
-    # 2. Local credentials file
-    cred_path = os.path.join(os.getcwd(), "google-credentials.json")
-    if os.path.exists(cred_path):
-        creds = service_account.Credentials.from_service_account_file(
-            cred_path, scopes=_SCOPES)
-        with open(cred_path) as f:
-            info = json.load(f)
-        return info.get("project_id"), creds
 
-    raise FileNotFoundError(
-        "No GCP credentials found. Set st.secrets['gcp_service_account'] "
-        "(Streamlit Cloud) or place google-credentials.json in the working dir."
-    )
+def _load_credentials():
+    """Return (project_id, google.oauth2.service_account.Credentials).
+
+    Priority: cached → st.secrets['gcp_service_account'] (Streamlit Cloud) → google-credentials.json.
+    Raises a clear, actionable error if none resolve (instead of silently failing every render).
+    """
+    global _CREDS_CACHE
+    if _CREDS_CACHE is not None:
+        return _CREDS_CACHE
+
+    from google.oauth2 import service_account
+
+    info = _read_secret_info()
+    source = "st.secrets"
+    if info is None:
+        cred_path = os.path.join(os.getcwd(), "google-credentials.json")
+        if os.path.exists(cred_path):
+            with open(cred_path) as f:
+                info = json.load(f)
+            source = "google-credentials.json"
+
+    if info is None:
+        raise FileNotFoundError(
+            "No GCP credentials found. On Streamlit Cloud, set st.secrets['gcp_service_account'] "
+            "to the full service-account JSON; locally, place google-credentials.json in the working dir."
+        )
+
+    try:
+        creds = service_account.Credentials.from_service_account_info(info, scopes=_SCOPES)
+    except Exception as e:
+        raise RuntimeError(
+            f"GCP credentials from {source} could not be parsed ({e}). If on Streamlit Cloud, "
+            "ensure the private_key is pasted with real newlines (use a TOML triple-quoted string)."
+        ) from e
+
+    _CREDS_CACHE = (info.get("project_id"), creds)
+    return _CREDS_CACHE
+
+
+def warm_credentials() -> str:
+    """Resolve + cache credentials on the CURRENT (main) thread so background render workers can
+    reuse them. Returns a short status string; raises with a clear message if creds are missing."""
+    project_id, _ = _load_credentials()
+    return f"credentials ready (project {project_id})"
 
 
 def _bucket_name(project_id: str) -> str:
@@ -203,7 +238,7 @@ class ImagenProvider:
 
         except Exception as e:
             print(f"[ImagenProvider] Error: {e}")
-            return {"uri": "error.png", "status": "failed"}
+            return {"uri": "error.png", "status": "failed", "error": str(e)[:300]}
 
 
 # ---------------------------------------------------------------------------
@@ -241,7 +276,7 @@ class GoogleTTSProvider:
 
         except Exception as e:
             print(f"[GoogleTTSProvider] Error: {e}")
-            return {"uri": "error.mp3", "status": "failed"}
+            return {"uri": "error.mp3", "status": "failed", "error": str(e)[:300]}
 
 
 # ---------------------------------------------------------------------------
@@ -342,4 +377,4 @@ class VeoVideoProvider:
 
         except Exception as e:
             print(f"[VeoVideoProvider] Failed: {e}")
-            return {"uri": "error.mp4", "status": "failed"}
+            return {"uri": "error.mp4", "status": "failed", "error": str(e)[:300]}

@@ -445,10 +445,12 @@ def shot_review(state: dict, beat_id: str) -> dict:
         # Reference frame
         "ref_frame_uri": beat.get("_start_frame_uri"),
         "ref_frame_exists": _file_ok(beat.get("_start_frame_uri")),
+        "ref_frame_error": state.get("reference_frames_per_shot", {}).get(beat_id, {}).get("error"),
         # Rendered video
         "video_uri": clip.get("uri"),
         "video_status": clip.get("status"),
         "video_exists": _file_ok(clip.get("uri")),
+        "video_error": clip.get("error"),
         # VQA scores
         "vqa_overall": vqa.get("overall_score"),
         "vqa_ending_state": vqa.get("ending_state_score"),

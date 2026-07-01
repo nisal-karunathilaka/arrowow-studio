@@ -148,11 +148,28 @@ def modify_sync(conv, seg, feedback):
 
 def start_shot_bg(conv, seg_key, feedback=None):
     """Kick a shot or composite segment off into a background thread."""
+    sess, mode = conv["session"], conv["config"]["mode"]
+
+    # Credentials must be resolved on the MAIN thread — st.secrets is not reliably readable from
+    # the background render worker (this was the deployed 'render failed' bug: creative agents run
+    # inline and worked, but the threaded Veo/Imagen render could not read st.secrets). Warm + cache
+    # BOTH credential paths here (media providers + LLM client) so the worker reuses them; if they
+    # are missing/misconfigured, fail loudly in the UI instead of a silent 'render failed'.
+    if mode == "LIVE_MEDIA":
+        try:
+            from app.providers import live_providers
+            live_providers.warm_credentials()
+            from app.adk import llm_backend
+            llm_backend._get_client()  # warms the cached Gemini client used by per-shot VQA
+        except Exception as e:
+            conv["status"][seg_key] = "error"
+            conv["error"] = f"GCP credentials not ready: {e}"
+            return
+
     job_id = f"{conv['id']}:{seg_key}:{int(time.time())}"
     conv["shot_job_ids"][seg_key] = job_id
     conv["status"][seg_key] = "running"
     conv["error"] = None
-    sess, mode = conv["session"], conv["config"]["mode"]
 
     async def factory(log):
         if feedback:
@@ -431,6 +448,8 @@ def view_shot(conv, rp):
             st.info("🧪 Mock mode — no image generated.")
         else:
             st.warning("Reference frame not available.")
+            if rp.get("ref_frame_error"):
+                st.caption(f"⚠ {rp['ref_frame_error']}")
 
     with c2:
         st.markdown("**Rendered Video**")
@@ -443,6 +462,8 @@ def view_shot(conv, rp):
             st.error("⚠ Halted — budget ceiling reached.")
         else:
             st.warning(f"Video not available (status: {video_status or 'pending'}).")
+            if rp.get("video_error"):
+                st.caption(f"⚠ {rp['video_error']}")
 
     # -- VQA Scores --
     if rp.get("vqa_overall") is not None:

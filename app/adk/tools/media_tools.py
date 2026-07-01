@@ -347,7 +347,7 @@ def make_render_beat_stage(beat_id: str):
                                                   generate_audio=True,
                                                   aspect_ratio=_aspect_ratio(ctx.state))
             result = {"uri": r.get("uri", "error.mp4"), "status": r.get("status", "failed"),
-                      "beat_id": beat_id}
+                      "beat_id": beat_id, "error": r.get("error")}
             # Charge ONLY for successful renders — RAI-blocked/failed videos are not billed.
             if result["status"] == "success":
                 CostLedger(ctx.state).record_video(VEO_MODEL, BEAT_SECONDS, live=True)
