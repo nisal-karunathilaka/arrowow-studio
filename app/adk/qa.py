@@ -74,6 +74,27 @@ def _shot_context(state: dict, beat_id: str) -> str:
     )
 
 
+def _load_clip_bytes(uri: str) -> bytes | None:
+    """Return the clip's raw bytes from a local path OR an https:// GCS signed URL.
+
+    Production returns GCS signed URLs (no local disk on Streamlit Cloud), so a naive
+    os.path.exists()/open() treats every real clip as 'missing' and the QA returns all-zeros.
+    """
+    if not uri or uri.endswith(("error.mp4", "error.png", "missing.mp4", "halted.mp4")):
+        return None
+    try:
+        if uri.startswith("http://") or uri.startswith("https://"):
+            import urllib.request
+            with urllib.request.urlopen(uri, timeout=90) as r:
+                return r.read()
+        if os.path.exists(uri):
+            with open(uri, "rb") as f:
+                return f.read()
+    except Exception as e:
+        print(f"[qa] could not load clip bytes ({uri[:60]}…): {e}")
+    return None
+
+
 async def review_clip(uri: str, state: dict, segment_label: str = "global") -> dict:
     """Multimodal QA over a SPECIFIC clip (a single beat or the final master) with
     Gemini 3.1 Pro. Returns a QAReport dict. Used by both the orchestrator critic loop
@@ -83,7 +104,8 @@ async def review_clip(uri: str, state: dict, segment_label: str = "global") -> d
     from .state.cost_ledger import CostLedger
 
     profile = resolve_profile(state.get("character", {}).get("character_id", "sienna_fitness_01"))
-    if not uri or not os.path.exists(uri):
+    clip_bytes = _load_clip_bytes(uri)
+    if clip_bytes is None:
         return {"approved": False, "overall_score": 0, "realism_score": 0, "lip_sync_score": 0,
                 "audio_score": 0, "continuity_score": 0,
                 "defects": [{"type": "artifact", "segment": segment_label, "severity": 5,
@@ -105,8 +127,7 @@ async def review_clip(uri: str, state: dict, segment_label: str = "global") -> d
                      "Remember: ignore all audio/music/voiceover; judge visuals + ending frame only.")
 
     client = llm_backend._get_client()
-    with open(uri, "rb") as f:
-        part = types.Part.from_bytes(data=f.read(), mime_type="video/mp4")
+    part = types.Part.from_bytes(data=clip_bytes, mime_type="video/mp4")
     config = types.GenerateContentConfig(
         system_instruction=system_instruction,
         response_mime_type="application/json",
