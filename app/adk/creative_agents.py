@@ -252,6 +252,7 @@ async def _live_shot_prompt(state: dict) -> dict:
             b["sync_mode"] = schemas.SYNC_VOICEOVER
             b["seed_locked"] = False
             b["dialogue_or_vo"] = ""
+            b["on_screen_text"] = ""  # natural short-film: no text/caption overlays
             if bid == "proof" and (b.get("camera") == "C3" or "macro" in b.get("camera_movement", "").lower() or not b.get("features_person", True)):
                 b["features_person"] = False
                 b["_prop_only"] = True

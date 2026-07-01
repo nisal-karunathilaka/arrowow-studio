@@ -232,7 +232,8 @@ def shot_prompt_instruction(profile: CharacterProfile,
             "camera — her lips must be gently CLOSED and still, with no mouthing of words, no jaw movement, and no speech "
             "in any beat. The dialogue_or_vo field should be empty. Focus entirely on detailed visual descriptions, calm "
             "cinematic movements, and smooth transition directions (like whip-pans or macro-zooms) between the scenes. "
-            "Do NOT write any narrator text or dialogue in the beats."
+            "Do NOT write any narrator text or dialogue in the beats. Leave 'on_screen_text' EMPTY for every beat — "
+            "this is a clean short film with NO text/caption overlays."
         )
     else:
         delivery_style = (

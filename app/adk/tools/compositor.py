@@ -406,13 +406,16 @@ def composite_timeline(ctx: InvocationContext) -> dict:
                     final_local_path = mix_out
                     vo_muxed = bool(local_vo_uri and os.path.exists(local_vo_uri))
 
-            # 5) Burn captions
-            windows = _caption_windows(ctx.state)
-            if windows:
-                cap_out = os.path.join(temp_dir, f"master_cap_{uuid.uuid4().hex[:6]}.mp4")
-                if _burn_captions(final_local_path, windows, temp_dir, cap_out):
-                    final_local_path = cap_out
-                    captioned = True
+            # 5) Burn captions — ONLY when overlays are enabled. Natural cinematic short-film mode
+            #    (no_audio_overlay) is a clean video with no text/caption overlays.
+            no_audio = ctx.state.get("brief", {}).get("no_audio_overlay", False)
+            if not no_audio:
+                windows = _caption_windows(ctx.state)
+                if windows:
+                    cap_out = os.path.join(temp_dir, f"master_cap_{uuid.uuid4().hex[:6]}.mp4")
+                    if _burn_captions(final_local_path, windows, temp_dir, cap_out):
+                        final_local_path = cap_out
+                        captioned = True
 
         if status == "success" and os.path.exists(final_local_path):
             # 6) Upload the final master video to GCS
