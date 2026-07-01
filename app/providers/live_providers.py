@@ -345,35 +345,53 @@ class VeoVideoProvider:
                 input_image_obj = types.Image(
                     gcs_uri=input_gcs_uri, mime_type="image/png")
 
-            operation = client.models.generate_videos(
-                model="veo-3.1-generate-001",
-                prompt=prompt,
-                image=input_image_obj,
-                config=types.GenerateVideosConfig(**config_params),
-            )
+            def _run(img_obj, include_last: bool) -> str:
+                """Generate + poll one Veo op; return the gs:// video URI or raise."""
+                cfg = dict(config_params)
+                if not include_last:
+                    cfg.pop("last_frame", None)
+                op = client.models.generate_videos(
+                    model="veo-3.1-generate-001", prompt=prompt, image=img_obj,
+                    config=types.GenerateVideosConfig(**cfg))
+                print(f"[VeoVideoProvider] Operation started: {op.name}")
+                while not op.done:
+                    print(".", end="", flush=True)
+                    time.sleep(10)
+                    op = client.operations.get(op)
+                print("")
+                if op.error:
+                    raise Exception(f"Veo error: {op.error}")
+                if not op.response or not op.response.generated_videos:
+                    raise Exception("Veo returned an empty response — likely a safety filter block.")
+                return op.response.generated_videos[0].video.uri
 
-            print(f"[VeoVideoProvider] Operation started: {operation.name}")
-            while not operation.done:
-                print(".", end="", flush=True)
-                time.sleep(10)
-                operation = client.operations.get(operation)
-            print("")
-
-            if operation.error:
-                raise Exception(f"Veo error: {operation.error}")
-            if not operation.response or not operation.response.generated_videos:
-                raise Exception(
-                    "Veo returned an empty response — likely a safety filter block.")
+            # Veo's RAI filter intermittently blocks a render that uses an input image — either an
+            # explicit input-image error (code 3, support 15236754) OR an "empty response" safety
+            # block that the reference/tail frame can trigger. In BOTH cases, when an input image was
+            # used, fall back to TEXT-TO-VIDEO (no input image) so the shot still renders — identity
+            # is carried by the prompt. Blocked renders are not billed, so the retry is free to try.
+            used_fallback = False
+            try:
+                gcs_path = _run(input_image_obj, include_last=bool(last_gcs_uri))
+            except Exception as first_err:
+                s = str(first_err).lower()
+                safety_block = ("input image violates" in s or ("'code': 3" in s and "image" in s)
+                                or "empty response" in s or "safety filter" in s or "usage guidelines" in s)
+                if input_image_obj is not None and safety_block:
+                    print("[VeoVideoProvider] Image-conditioned render RAI-blocked — retrying as "
+                          "text-to-video (no input image)…")
+                    gcs_path = _run(None, include_last=False)
+                    used_fallback = True
+                else:
+                    raise
 
             # The rendered video is already in GCS. Generate a signed URL directly —
             # no local download needed (Streamlit Cloud has no persistent disk).
-            gcs_path = operation.response.generated_videos[0].video.uri
-            # gcs_path: gs://<bucket>/renders/<file>.mp4
             relative_path = gcs_path.replace(f"gs://{bucket_name}/", "")
             url = _signed_url(bkt, relative_path, expiry_hours=2)
 
-            print(f"[VeoVideoProvider] Success → {gcs_path}")
-            return {"uri": url, "status": "success"}
+            print(f"[VeoVideoProvider] Success → {gcs_path}" + (" (text-to-video fallback)" if used_fallback else ""))
+            return {"uri": url, "status": "success", "fallback_t2v": used_fallback}
 
         except Exception as e:
             print(f"[VeoVideoProvider] Failed: {e}")
